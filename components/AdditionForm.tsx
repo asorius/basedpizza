@@ -3,7 +3,6 @@ import {
   useForm,
   Controller,
   SubmitHandler,
-  ErrorOption,
   SubmitErrorHandler,
 } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -28,9 +27,9 @@ interface IFormInputs {
   image: File | null;
 }
 const defaults = {
-  name: 'asfdssd',
-  brand: 'sadfasdfsd',
-  price: 20,
+  name: '',
+  brand: '',
+  price: '',
   image: null,
 };
 
@@ -39,16 +38,21 @@ export function AdditionForm() {
     control,
     reset,
     handleSubmit,
-    formState: { errors, isSubmitSuccessful },
+    formState: { errors, isSubmitSuccessful, isLoading, isSubmitting },
   } = useForm<IFormInputs>({
     resolver: yupResolver(formValidationSchema),
     defaultValues: defaults,
   });
   const [image, setImages] = React.useState<File | null>(null);
-
+  React.useEffect(() => {
+    reset(defaults);
+    setImages(null);
+  }, [isSubmitSuccessful, reset]);
   const deleteFunc = (e: any) => {
     setImages(null);
   };
+  console.log('Is loading: ' + isLoading);
+  console.log('Is submitting: ' + isSubmitting);
   const onSubmit: SubmitHandler<IFormInputs> = async (data) => {
     const { name, price, brand } = data;
     try {
@@ -63,6 +67,9 @@ export function AdditionForm() {
   const errorHandler: SubmitErrorHandler<IFormInputs> = (error) => {
     console.log(error);
   };
+  if (isSubmitting) {
+    return <h2>Submitting form...</h2>;
+  }
   return (
     <form
       onSubmit={handleSubmit(onSubmit, errorHandler)}
