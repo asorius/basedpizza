@@ -11,4 +11,10 @@ const formValidationSchema = yup
     image: yup.mixed().required('Photo must be provided'),
   })
   .required();
-export { capitalized, formValidationSchema };
+const formValidationSchemaUser = yup
+  .object({
+    email: yup.string().email().required(),
+    password: yup.string().min(6).max(30).required(),
+  })
+  .required();
+export { capitalized, formValidationSchema, formValidationSchemaUser };

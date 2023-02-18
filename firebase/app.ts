@@ -7,12 +7,10 @@ import {
   setDoc,
   addDoc,
 } from 'firebase/firestore/lite';
-// import firebaseui from 'firebaseui';
-import firebase from 'firebase/compat/app';
 import { getStorage, ref, uploadBytes } from 'firebase/storage';
-// const ui = new firebaseui.auth.AuthUI(firebase.auth());
 const firebaseConfig = {
-  apiKey: process.env.FIRE_API_KEY,
+  // apiKey: process.env.FIRE_API_KEY <-------throws an error with authentication, works with hardcoding,
+  apiKey: 'AIzaSyCDlQja-OMDJOXrMgx8qheIolHHE7ypErs',
 
   authDomain: 'react-df350.firebaseapp.com',
 

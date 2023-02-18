@@ -1,7 +1,3 @@
-import firebaseui from 'firebaseui';
-import firebase from 'firebase/compat/app';
-
-import { initializeApp } from 'firebase/app';
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -11,26 +7,50 @@ import { app } from './app';
 
 // Initialize Firebase Authentication and get a reference to the service
 const auth = getAuth(app);
-interface IUser {
+interface IUserInput {
   email: string;
   password: string;
 }
-const registerNewUser = async ({ email, password }: IUser) => {
+interface IUser {
+  email: string | null;
+  verified: boolean;
+  createdAt: string | undefined;
+  lastSignInTime: string | undefined;
+}
+interface IError {
+  error: string;
+}
+const registerNewUser = async ({
+  email,
+  password,
+}: IUserInput): Promise<any> => {
   try {
-    const userCredential = await createUserWithEmailAndPassword(
+    const response = await createUserWithEmailAndPassword(
       auth,
       email,
       password
     );
-    if (userCredential) {
-      const user = userCredential.user;
-      return user;
+    if (response.user) {
+      const user = response.user;
+      const userData = {
+        email: user.email,
+        verified: user.emailVerified,
+        createdAt: user.metadata.creationTime,
+        lastSignInTime: user.metadata.lastSignInTime,
+      };
+      return userData;
+    } else {
+      throw new Error();
     }
-  } catch (error) {
-    console.log(error);
+  } catch (error: any) {
+    // for (const key in error) {
+    //   console.log(key);
+    // }
+    // console.log(error.customData._tokenResponse.error.message);
+    return { error: error.customData._tokenResponse.error.message };
   }
 };
-const signIn = async ({ email, password }: IUser) => {
+const signIn = async ({ email, password }: IUserInput) => {
   try {
     const userCredential = await signInWithEmailAndPassword(
       auth,
