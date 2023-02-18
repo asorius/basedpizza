@@ -63,6 +63,7 @@ const signIn = async ({ email, password }: IUserInput) => {
     }
   } catch (error) {
     console.log(error);
+    return error;
   }
 };
 export { registerNewUser, signIn };

@@ -10,37 +10,22 @@ import {
 import { yupResolver } from '@hookform/resolvers/yup';
 import { capitalized } from '../lib/utils';
 import { Button, FormControl, TextField, FormHelperText } from '@mui/material';
-import { registerNewUser } from '../firebase/auth';
+import { signIn } from '../firebase/auth';
 
 interface IFormInputs {
   email: string;
   password: string;
-  repeatPassword: string;
-}
-interface IUser {
-  email: string | null;
-  verified: boolean;
-  createdAt: string | undefined;
-  lastSignInTime: string | undefined;
 }
 
 const defaults = {
   email: 'asfdssd@mail.com',
   password: 'sadfasdfsd',
-  repeatPassword: 'sadfasdfsd',
 };
 const SignUpSchema = yup.object().shape({
   email: yup.string().email('Invalid email').required('Required'),
   password: yup.string().min(6).max(30).required(),
-  repeatPassword: yup.string().when('password', {
-    is: (val: string) => val && val.length > 0,
-    then: yup
-      .string()
-      .oneOf([yup.ref('password')], "Passwords don't match")
-      .required('Required'),
-  }),
 });
-export default function Register() {
+export default function Login() {
   const {
     control,
     reset,
@@ -50,22 +35,21 @@ export default function Register() {
     resolver: yupResolver(SignUpSchema),
     defaultValues: defaults,
   });
-  const [user, setUser] = React.useState<IUser | null>(null);
   const [error, setError] = React.useState<string>('');
   const router = useRouter();
 
   const onSubmit: SubmitHandler<IFormInputs> = async (data) => {
-    const response = await registerNewUser(data);
+    const response = await signIn(data);
+    console.log(response);
     if (!response) {
       return;
     }
-    if (response.error) {
-      setError(response.error);
-      return;
-    } else {
-      // setUser(response);
-      router.push('/');
-    }
+    // if (response.error) {
+    //   setError(response.error);
+    //   return;
+    // } else {
+    router.push('/');
+    // }
   };
 
   const errorHandler: SubmitErrorHandler<IFormInputs> = (error) => {
@@ -89,7 +73,7 @@ export default function Register() {
             Submitting
           </div>
         )}
-        <h1>Register</h1>
+        <h1>Login</h1>
 
         <Controller
           name='email'
@@ -121,23 +105,6 @@ export default function Register() {
                 error={errors.hasOwnProperty('password')}></TextField>
               <FormHelperText>
                 {capitalized(errors.password?.message)}
-              </FormHelperText>
-            </FormControl>
-          )}
-        />
-        <Controller
-          name='repeatPassword'
-          control={control}
-          render={({ field }) => (
-            <FormControl error={errors.hasOwnProperty('repeatPassword')}>
-              <TextField
-                {...field}
-                variant='outlined'
-                disabled={isSubmitting}
-                label='Repeat password'
-                error={errors.hasOwnProperty('repeatPassword')}></TextField>
-              <FormHelperText>
-                {capitalized(errors.repeatPassword?.message)}
               </FormHelperText>
             </FormControl>
           )}

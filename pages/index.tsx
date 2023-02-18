@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import { AdditionForm } from '../components/AdditionForm';
+import AuthRoute from '../components/AuthRoute';
 
 export default function Home() {
   return (
@@ -15,7 +16,9 @@ export default function Home() {
       </Head>
       <main>
         <div>
-          <AdditionForm></AdditionForm>
+          <AuthRoute>
+            <AdditionForm></AdditionForm>
+          </AuthRoute>
         </div>
       </main>
     </>
