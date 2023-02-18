@@ -28,18 +28,27 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const storage = getStorage(app);
-const addData = async (pizzaData: {
+
+interface IImageObject {
+  creator: string;
+  imageRef: string;
+  timeStamp: string;
+}
+interface IPizzaProps {
   name: string;
   brand: string;
   price: number | string;
-}) => {
+  creator: string;
+  images: IImageObject[];
+}
+const addData = async (pizzaData: IPizzaProps) => {
   // const dbRef = doc(db, 'pizzas', pizzaData.brand);
   // await setDoc(dbRef, { capital: true }, { merge: true });
   const addedDoc = await addDoc(collection(db, 'pizzas'), pizzaData);
 
   // ------------------------- AUTHENTICATION
-  // console.log(addedDoc);
-  // return addedDoc;
+  console.log(addedDoc);
+  return addedDoc;
 };
 const uploadHandler = async (file: File, brand: string, name: string) => {
   const storageLocation = `${brand}/${name}/${file.name}`;

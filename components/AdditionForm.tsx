@@ -27,6 +27,7 @@ interface IFormInputs {
   price: number | string;
   image: File | null;
 }
+
 const defaults = {
   name: '',
   brand: '',
@@ -59,8 +60,30 @@ export function AdditionForm() {
     const { name, price, brand } = data;
     try {
       if (!image) return;
-      // await addData({ name, price, brand });
       const res = await uploadHandler(image, brand, name);
+      //if res, that means there image has been uploaded successfully and a reference to it has been returned
+      if (res && user) {
+        //TODO ADD DATA AND REDIRECT TO DYNAMICALLY CREATED PAGE
+
+        //get user id
+        const userId = user.uid;
+
+        //created image object with references
+        const imageObject = {
+          creator: userId,
+          imageRef: res.ref,
+          timeStamp: res.timeCreated,
+        };
+
+        const addedData = await addData({
+          name,
+          price,
+          brand,
+          creator: userId,
+          images: [imageObject],
+        });
+        console.log(addedData);
+      }
       console.log(res);
     } catch (error) {
       console.log(error);
