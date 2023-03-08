@@ -17,4 +17,5 @@ const formValidationSchemaUser = yup
     password: yup.string().min(6).max(30).required(),
   })
   .required();
+
 export { capitalized, formValidationSchema, formValidationSchemaUser };

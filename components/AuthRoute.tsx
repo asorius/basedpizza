@@ -12,7 +12,6 @@ export default function AuthRoute({ children }: Props) {
   React.useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        console.log(user);
         return user;
       } else {
         router.push('/signin');

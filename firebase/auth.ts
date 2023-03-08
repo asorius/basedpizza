@@ -66,4 +66,4 @@ const signIn = async ({ email, password }: IUserInput) => {
     return error;
   }
 };
-export { registerNewUser, signIn };
+export { registerNewUser, signIn, auth };
