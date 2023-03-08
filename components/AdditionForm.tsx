@@ -28,6 +28,7 @@ import { getAuth } from 'firebase/auth';
 import { useRouter } from 'next/router';
 
 import AutocompleteInput from '../lib/AutocompleteInput';
+import { BrandObject, PizzaObject } from '../lib/types';
 
 interface FormInputs {
   name: string;
@@ -70,7 +71,9 @@ export function AdditionForm() {
       if (!brandslist) return;
       //SOMETHING LIKE PIZZANAME(BRAND) {MAYBE?} AND THEN ON NAME SELECT IT AUTOFILS BRAND OPTION
       //NAMES SCRAPPED FROM MAJOR BRANDS? POSSIBLY API FOR THAT?
-      const brands = brandslist.map((brandDataObject) => brandDataObject.brand);
+      const brands = brandslist.map(
+        (brandDataObject) => brandDataObject.brandInfo.brandName
+      );
       setBrandNames(brands);
     };
     getBrands();
@@ -78,9 +81,11 @@ export function AdditionForm() {
 
   React.useEffect(() => {
     const getPizzasInBrand = async () => {
-      const pizzasInBrand = await getDataOfSingleBrand(selectedBrand);
-      if (!pizzasInBrand) return;
-      const pizzaNames = Object.keys(pizzasInBrand);
+      const brandData = await getDataOfSingleBrand(selectedBrand);
+      if (!brandData) return;
+      const pizzaNames = brandData.pizzaList.map(
+        (pizzaItem: PizzaObject) => pizzaItem.pizzaName
+      );
       setPizzaNames(pizzaNames);
     };
     getPizzasInBrand();

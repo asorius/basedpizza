@@ -104,9 +104,9 @@ const getDataOfSingleBrand = async (brand: string) => {
 const getAllPizzas = async () => {
   try {
     const querySnapshot = await getDocs(collection(db, 'pizzas'));
+    //Set type to BrandObject, but for now the doc.data() interferes by adding DocumentData propery, IDK how to avoid it atm
     let brandList: any[] = [];
     querySnapshot.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
       const brandItem = doc.data();
       brandList.push(brandItem);
     });
