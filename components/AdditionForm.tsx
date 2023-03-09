@@ -6,7 +6,7 @@ import {
   SubmitErrorHandler,
 } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { capitalized, formValidationSchema } from '../lib/utils';
+import { capitalized, compressImage, formValidationSchema } from '../lib/utils';
 import {
   Button,
   FormControl,
@@ -48,13 +48,13 @@ export function AdditionForm() {
   const {
     control,
     reset,
+    setError,
     handleSubmit,
     formState: { errors, isSubmitSuccessful, isLoading, isSubmitting },
   } = useForm<FormInputs>({
     resolver: yupResolver(formValidationSchema),
     defaultValues: defaults,
   });
-
   const router = useRouter();
   const auth = getAuth();
   const user = auth.currentUser;
@@ -126,7 +126,7 @@ export function AdditionForm() {
           imageList: [imageObject],
         });
         if (pizzaAddResponse.status) {
-          // router.push(`/pizzas/${brand}/${name}`);
+          router.push(`/pizzas/${brand}/${name}`);
           console.log(pizzaAddResponse);
         }
       }
@@ -227,8 +227,17 @@ export function AdditionForm() {
                 onChange={async (e) => {
                   if (e.currentTarget.files) {
                     const file = e.currentTarget.files[0];
+                    if (!file.type.startsWith('image')) {
+                      setError('image', {
+                        message: 'Please select an image file',
+                      });
+                      return;
+                    }
+                    const compressedFile = await compressImage(file, {
+                      quality: 0.5,
+                    });
                     field.onChange(e);
-                    setImages(file);
+                    compressedFile && setImages(compressedFile);
                   }
                 }}
               />
