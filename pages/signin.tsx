@@ -40,7 +40,6 @@ export default function Login() {
 
   const onSubmit: SubmitHandler<IFormInputs> = async (data) => {
     const response = await signIn(data);
-    console.log(response);
     if (!response) {
       return;
     }

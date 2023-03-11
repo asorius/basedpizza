@@ -7,10 +7,18 @@ import {
   setDoc,
   getDoc,
   addDoc,
+  updateDoc,
+  arrayUnion,
 } from 'firebase/firestore/lite';
 import { getStorage, ref, uploadBytes } from 'firebase/storage';
 
-import { ImageObject, PizzaObject, BrandObject, BrandData } from '../lib/types';
+import {
+  ImageObject,
+  PizzaObject,
+  BrandObject,
+  BrandData,
+  SinglePizza,
+} from '../lib/types';
 const firebaseConfig = {
   // apiKey: process.env.FIRE_API_KEY <-------throws an error with authentication, works with hardcoding,
   apiKey: 'AIzaSyCDlQja-OMDJOXrMgx8qheIolHHE7ypErs',
@@ -70,10 +78,13 @@ const getDataOfSinglePizza = async (brandName: string, pizzaName: string) => {
         (pizza: PizzaObject) => pizza.pizzaName === pizzaName
       );
       if (!requestedPizza) throw new Error('Pizza not found');
+      const pizzaIndex = brandItem.pizzaList.indexOf(requestedPizza);
+      console.log({ pizzaIndex });
       //Return new brand object like item with requested pizza as the only pizza in the list (UN-SURE)
-      const response: BrandObject = {
+      const response: SinglePizza = {
         brandInfo: brandItem.brandInfo,
         pizzaList: [requestedPizza],
+        pizzaIndex,
       };
       return response;
     } else {
@@ -84,9 +95,40 @@ const getDataOfSinglePizza = async (brandName: string, pizzaName: string) => {
     throw new Error('Could not connect to database');
   }
 };
+const updatePizza = async (
+  brandName: string,
+  pizzaName: string,
+  newImage: ImageObject
+) => {
+  try {
+    const docRef = doc(db, 'pizzas', brandName);
+    //Get required brand with all pizzas
+    const brand = await getDataOfSingleBrand(brandName);
+    if (brand) {
+      //Iterate through all pizzas in that brand, add image to matching pizza name
+      const newList = brand.pizzaList.map((pizza: any) => {
+        if (
+          pizza.pizzaName === pizzaName &&
+          !pizza.imageList.contains(newImage)
+        ) {
+          pizza.imageList.push(newImage);
+        }
+        return pizza;
+      });
+      //update brands document
+      await updateDoc(docRef, {
+        pizzaList: newList,
+      });
+    }
+  } catch (e) {
+    console.log(e);
+    throw new Error('Could not connect to database');
+  }
+};
 const getDataOfSingleBrand = async (brand: string) => {
   if (!brand) return;
   try {
+    console.log('getting data...');
     const docRef = doc(db, 'pizzas', brand);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
@@ -141,5 +183,6 @@ export {
   getDataOfSinglePizza,
   getDataOfSingleBrand,
   getAllPizzas,
+  updatePizza,
   firebaseConfig,
 };

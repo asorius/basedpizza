@@ -1,18 +1,29 @@
 import { getAuth, signOut } from 'firebase/auth';
 import React from 'react';
 import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
+
+import Link from 'next/link';
+import UserActions from './UserActions';
 export default function Navbar() {
   const auth = getAuth();
   const user = auth.currentUser;
   return (
-    <div>
-      {' '}
-      {user && (
-        <div>
-          <h2>{user.email}</h2>
-          <Button onClick={() => signOut(auth)}>Log out</Button>
-        </div>
-      )}
-    </div>
+    <Box color='secondary' sx={{ flexGrow: 1 }}>
+      <Container>
+        <Grid container>
+          <Grid item xs={4} lg={10}>
+            <Link href='/'>
+              <h2>PizzaBase</h2>
+            </Link>{' '}
+          </Grid>
+          <Grid item xs={4} lg={2}>
+            <UserActions />
+          </Grid>
+        </Grid>
+      </Container>
+    </Box>
   );
 }

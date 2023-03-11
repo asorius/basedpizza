@@ -17,3 +17,6 @@ export interface BrandObject {
   brandInfo: BrandData;
   pizzaList: PizzaObject[];
 }
+export interface SinglePizza extends BrandObject {
+  pizzaIndex: number;
+}

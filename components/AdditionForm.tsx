@@ -22,6 +22,7 @@ import {
   getAllPizzas,
   getDataOfSingleBrand,
   getDataOfSinglePizza,
+  updatePizza,
   uploadHandler,
 } from '../firebase/app';
 import { getAuth } from 'firebase/auth';
@@ -118,17 +119,17 @@ export function AdditionForm() {
           timeStamp: imageUploadResponse.timeCreated,
         };
 
-        const pizzaAddResponse = await addData({
-          pizzaName: name,
-          price: +price,
-          brandName: brand,
-          pizzaCreator: userId,
-          imageList: [imageObject],
-        });
-        if (pizzaAddResponse.status) {
-          router.push(`/pizzas/${brand}/${name}`);
-          console.log(pizzaAddResponse);
-        }
+        const pizzaAddResponse = await updatePizza(
+          name,
+
+          brand,
+
+          imageObject
+        );
+        // if (pizzaAddResponse.status) {
+        //   router.push(`/pizzas/${brand}/${name}`);
+        //   console.log(pizzaAddResponse);
+        // }
       }
     } catch (error) {
       console.log(error);

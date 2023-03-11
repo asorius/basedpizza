@@ -4,8 +4,10 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import PizzaCard from './PizzaCard';
-import { BrandObject, ImageObject, PizzaObject } from '../lib/types';
+import { getAuth, signOut } from 'firebase/auth';
+
+import PizzaCard from './pizzaCard';
+import { BrandObject, PizzaObject } from '../lib/types';
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,
@@ -17,7 +19,9 @@ interface Props {
   brandObjects: BrandObject[];
 }
 export default function BasicStack({ brandObjects }: Props) {
-  console.log(brandObjects);
+  const auth = getAuth();
+  const user = auth.currentUser;
+  if (!brandObjects) return <h1>No pizzas found..</h1>;
   return (
     <Box sx={{ width: '100%' }}>
       <Stack spacing={2}>
@@ -30,7 +34,6 @@ export default function BasicStack({ brandObjects }: Props) {
               </Typography>
               {pizzaList.map((pizzaItem: PizzaObject, index: number) => {
                 const pizzaName = pizzaItem.pizzaName;
-                const images: ImageObject[] = pizzaItem.imageList;
                 return (
                   <PizzaCard
                     key={index}

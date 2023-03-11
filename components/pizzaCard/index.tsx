@@ -2,14 +2,15 @@ import * as React from 'react';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import Image from 'next/image';
-import { storage } from '../firebase/app';
+import { storage } from '../../firebase/app';
 import { ref, getDownloadURL } from 'firebase/storage';
-import { BrandData, BrandObject, PizzaObject } from '../lib/types';
+import { BrandData, BrandObject, PizzaObject } from '../../lib/types';
+import ImageDisplay from './ImageDisplay';
+
 interface Props {
   brandInfo: BrandData;
   pizzaItem: PizzaObject;
@@ -19,24 +20,21 @@ export default function PizzaCard({ brandInfo, pizzaItem, link }: Props) {
   const [imageUrls, setImages] = React.useState<string[]>([]);
   React.useEffect(() => {
     const generateUrls = async () => {
+      if (!pizzaItem.imageList) {
+        console.log('No images available in database');
+        return;
+      }
       const promiseList = pizzaItem.imageList.map(async (image: any) => {
         const url = await getDownloadURL(ref(storage, image.imageRef));
         return url;
       });
       const urls = await Promise.all(promiseList).then((values) => values);
-      console.log(urls);
       setImages(urls);
     };
     generateUrls();
   }, [pizzaItem.imageList]);
   return (
     <Card sx={{ maxWidth: 345 }}>
-      <CardMedia
-        component='img'
-        alt='green iguana'
-        height='140'
-        image='/static/images/cards/contemplative-reptile.jpg'
-      />
       <CardContent>
         <Typography gutterBottom variant='h5' component='div'>
           {pizzaItem.pizzaName}
@@ -48,7 +46,8 @@ export default function PizzaCard({ brandInfo, pizzaItem, link }: Props) {
           {pizzaItem.price}
         </Typography>
         {/* <img src={ } /> */}
-        {imageUrls.map((url: string, ind: number) => (
+        <ImageDisplay imageList={imageUrls}></ImageDisplay>
+        {/* {imageUrls.map((url: string, ind: number) => (
           <Image
             alt='Mountains'
             key={ind}
@@ -61,7 +60,7 @@ export default function PizzaCard({ brandInfo, pizzaItem, link }: Props) {
               height: 'auto',
             }}
           />
-        ))}
+        ))} */}
       </CardContent>
       {link && (
         <CardActions>

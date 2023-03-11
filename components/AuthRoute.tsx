@@ -14,7 +14,7 @@ export default function AuthRoute({ children }: Props) {
       if (user) {
         return user;
       } else {
-        router.push('/signin');
+        router.push('/');
       }
     });
   }, [auth, router]);
