@@ -11,6 +11,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { capitalized } from '../lib/utils';
 import { Button, FormControl, TextField, FormHelperText } from '@mui/material';
 import { registerNewUser } from '../firebase/auth';
+import Loading from '../lib/Loading';
 
 interface IFormInputs {
   email: string;
@@ -71,6 +72,13 @@ export default function Register() {
   const errorHandler: SubmitErrorHandler<IFormInputs> = (error) => {
     console.log(error);
   };
+  const [isRendering, setRendering] = React.useState(true);
+  React.useEffect(() => {
+    setTimeout(() => setRendering(!isRendering), 500);
+  }, []);
+  if (isRendering) {
+    return <Loading />;
+  }
   return (
     <div>
       <form

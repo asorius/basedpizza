@@ -13,7 +13,7 @@ import { capitalized, compressImage } from '../../lib/utils';
 import Loading from '../../lib/Loading';
 import { Button, FormControl, FormHelperText } from '@mui/material';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
-import ImagePreview from '../../components/ImagePreview';
+import ImagePreview from '../ImagePreview';
 import { uploadHandler } from '../../firebase/app';
 
 export default function UploadImage(props: { name: string; brand: string }) {

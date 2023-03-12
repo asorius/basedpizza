@@ -6,8 +6,10 @@ import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { getAuth, signOut } from 'firebase/auth';
 
-import PizzaCard from './pizzaCard';
+import PizzaCard from './pizzaCardComponent';
 import { BrandObject, PizzaObject } from '../lib/types';
+import Loading from '../lib/Loading';
+
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,
@@ -21,6 +23,13 @@ interface Props {
 export default function BasicStack({ brandObjects }: Props) {
   const auth = getAuth();
   const user = auth.currentUser;
+  const [isRendering, setRendering] = React.useState(true);
+  React.useEffect(() => {
+    setTimeout(() => setRendering(!isRendering), 500);
+  }, []);
+  if (isRendering) {
+    return <Loading />;
+  }
   return (
     <Box sx={{ width: '100%' }}>
       <Stack spacing={2}>

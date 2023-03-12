@@ -6,13 +6,6 @@ import ImageListItem from '@mui/material/ImageListItem';
 interface Props {
   imageList: string[];
 }
-
-const style = {
-  button: {
-    cursor: 'pointer',
-  },
-};
-
 export default function ImageDisplay(props: Props) {
   const [currentImage, setCurrentImage] = React.useState<string>('');
   const [images, updateImages] = React.useState<string[]>([]);

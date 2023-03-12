@@ -9,6 +9,7 @@ import Image from 'next/image';
 import { storage } from '../../firebase/app';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { BrandData, BrandObject, PizzaObject } from '../../lib/types';
+import Loading from '../../lib/Loading';
 import ImageDisplay from './ImageDisplay';
 
 interface Props {
@@ -34,6 +35,13 @@ export default function PizzaCard({ brandInfo, pizzaItem, link, user }: Props) {
     };
     generateUrls();
   }, [pizzaItem.imageList]);
+  const [isRendering, setRendering] = React.useState(true);
+  React.useEffect(() => {
+    setTimeout(() => setRendering(!isRendering), 500);
+  }, []);
+  if (isRendering) {
+    return <Loading />;
+  }
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardContent>

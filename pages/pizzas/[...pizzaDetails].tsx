@@ -1,7 +1,7 @@
 import React from 'react';
 import { getDataOfSinglePizza, updatePizza } from '../../firebase/app';
 import { useRouter } from 'next/router';
-import PizzaCard from '../../components/pizzaCard';
+import PizzaCard from '../../components/pizzaCardComponent';
 import AuthRoute from '../../components/AuthRoute';
 import { BrandObject, SinglePizza } from '../../lib/types';
 import Layout from '../../components/Layout';
@@ -26,7 +26,7 @@ import {
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import ImagePreview from '../../components/ImagePreview';
 import { uploadHandler } from '../../firebase/app';
-import UploadImage from 'components/pizzaCard/UploadImage';
+import UploadImage from 'components/pizzaCardComponent/UploadImage';
 
 export default function Pizza() {
   const auth = getAuth();
