@@ -21,7 +21,6 @@ interface Props {
 export default function BasicStack({ brandObjects }: Props) {
   const auth = getAuth();
   const user = auth.currentUser;
-  if (!brandObjects) return <h1>No pizzas found..</h1>;
   return (
     <Box sx={{ width: '100%' }}>
       <Stack spacing={2}>
@@ -39,6 +38,7 @@ export default function BasicStack({ brandObjects }: Props) {
                     key={index}
                     brandInfo={brandItem.brandInfo}
                     pizzaItem={pizzaItem}
+                    user={user}
                     link={`/pizzas/${brandItem.brandInfo.brandName}/${pizzaName}`}
                   />
                 );

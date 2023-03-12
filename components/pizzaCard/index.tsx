@@ -15,8 +15,9 @@ interface Props {
   brandInfo: BrandData;
   pizzaItem: PizzaObject;
   link?: any;
+  user?: any;
 }
-export default function PizzaCard({ brandInfo, pizzaItem, link }: Props) {
+export default function PizzaCard({ brandInfo, pizzaItem, link, user }: Props) {
   const [imageUrls, setImages] = React.useState<string[]>([]);
   React.useEffect(() => {
     const generateUrls = async () => {
@@ -42,33 +43,19 @@ export default function PizzaCard({ brandInfo, pizzaItem, link }: Props) {
         <Typography gutterBottom variant='h5' component='div'>
           {brandInfo.brandName}
         </Typography>
+
         <Typography variant='body2' color='text.secondary'>
           {pizzaItem.price}
         </Typography>
-        {/* <img src={ } /> */}
         <ImageDisplay imageList={imageUrls}></ImageDisplay>
-        {/* {imageUrls.map((url: string, ind: number) => (
-          <Image
-            alt='Mountains'
-            key={ind}
-            src={url}
-            width={700}
-            height={475}
-            sizes='100vw'
-            style={{
-              width: '100%',
-              height: 'auto',
-            }}
-          />
-        ))} */}
+        {link && (
+          <CardActions>
+            <Button size='small'>
+              <Link href={link}>{link}</Link>
+            </Button>
+          </CardActions>
+        )}
       </CardContent>
-      {link && (
-        <CardActions>
-          <Button size='small'>
-            <Link href={link}>{link}</Link>
-          </Button>
-        </CardActions>
-      )}
     </Card>
   );
 }

@@ -22,14 +22,13 @@ export default function Search({
   const [pizzaNames, setPizzaNames] = React.useState<string[]>([]);
 
   React.useEffect(() => {
-    const brands = brandList.map(
+    const listOfBrandNames = brandList.map(
       (brandDataObject) => brandDataObject.brandInfo.brandName
     );
-    setBrandNames(brands);
+    setBrandNames(listOfBrandNames);
   }, []);
 
   React.useEffect(() => {
-    console.log(selectedBrand);
     if (selectedBrand) {
       const pizzaNameList = selectedBrand.pizzaList.map(
         (pizzaItem: PizzaObject) => pizzaItem.pizzaName

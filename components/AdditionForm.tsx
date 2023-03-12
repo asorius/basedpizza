@@ -44,7 +44,7 @@ const defaults = {
   image: null,
 };
 
-export function AdditionForm() {
+export default function AdditionForm() {
   const {
     control,
     reset,

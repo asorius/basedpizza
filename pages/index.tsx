@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import Head from 'next/head';
-import { AdditionForm } from '../components/AdditionForm';
 import Navbar from '../components/Navbar';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MainList from 'components/MainList';
 import Layout from '../components/Layout';
+import Link from 'next/link';
 import { getAuth } from 'firebase/auth';
 import Search from '../components/searchComponent';
 import { app, getAllPizzas } from '../firebase/app';
 import { BrandObject, PizzaObject } from 'lib/types';
+import Loading from 'lib/Loading';
+import { lazy } from 'react';
+const Main = lazy(() => import('../components/MainList'));
 export default function Home() {
   const [brands, setBrands] = React.useState<BrandObject[]>([]);
   const [brandsDB, setBrandsDB] = React.useState<BrandObject[]>([]);
@@ -33,6 +36,7 @@ export default function Home() {
     };
     getAllData();
   }, []);
+
   const inputController = (e: any) => {
     if (e.target) {
       const key: string = e.target.name;
@@ -85,12 +89,13 @@ export default function Home() {
   }, [searchInput]);
   return (
     <Layout>
-      {/* MOVE CREATION FORM TO A NEW ROUTE / SEARCH DOES NOT FILTER TO A SINGLE PIZZA ITEM / USER ACTIONS STOPPED REROUTING */}
       {user ? (
-        <AdditionForm></AdditionForm>
+        <Link href={'/pizzas/'}>
+          <Button>Create a pizza</Button>
+        </Link>
       ) : (
         <h2>
-          To create or upload your photo you must register or sign in first.{' '}
+          Can't find what you wanted? Register or sign to create a new Pizza.{' '}
         </h2>
       )}
       {brands.length > 0 && (
@@ -102,7 +107,14 @@ export default function Home() {
           selectedBrand={searchResult}
         />
       )}
-      {brands ? <MainList brandObjects={brands} /> : <h3>'Loading...'</h3>}
+
+      {brands ? (
+        <Suspense fallback={<Loading />}>
+          <Main brandObjects={brands} />
+        </Suspense>
+      ) : (
+        <h3>No brands found...</h3>
+      )}
     </Layout>
   );
 }

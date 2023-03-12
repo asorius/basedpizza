@@ -83,12 +83,12 @@ const getDataOfSinglePizza = async (brandName: string, pizzaName: string) => {
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       const brandItem = docSnap.data();
+      //Find the specific pizza
       const requestedPizza: PizzaObject = brandItem.pizzaList.find(
         (pizza: PizzaObject) => pizza.pizzaName === pizzaName
       );
       if (!requestedPizza) throw new Error('Pizza not found');
       const pizzaIndex = brandItem.pizzaList.indexOf(requestedPizza);
-      console.log({ pizzaIndex });
       //Return new brand object like item with requested pizza as the only pizza in the list (UN-SURE)
       const response: SinglePizza = {
         brandInfo: brandItem.brandInfo,
@@ -110,21 +110,23 @@ const updatePizza = async (
   newImage: ImageObject
 ) => {
   try {
+    console.log({ brandName, pizzaName });
     const docRef = doc(db, 'pizzas', brandName);
     //Get required brand with all pizzas
     const brand = await getDataOfSingleBrand(brandName);
     if (brand) {
-      //Iterate through all pizzas in that brand, add image to matching pizza name
+      //Iterate through all pizzas in that brand, add image to the pizza with matching name
       const newList = brand.pizzaList.map((pizza: any) => {
+        //If pizza names match and there isn't already that image in there, push it
         if (
           pizza.pizzaName === pizzaName &&
-          !pizza.imageList.contains(newImage)
+          !pizza.imageList.includes(newImage)
         ) {
           pizza.imageList.push(newImage);
         }
         return pizza;
       });
-      //update brands collection
+      //Update brands collection with the new list
       await updateDoc(docRef, {
         pizzaList: newList,
       });
