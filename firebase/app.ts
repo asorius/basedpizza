@@ -6,9 +6,7 @@ import {
   doc,
   setDoc,
   getDoc,
-  addDoc,
   updateDoc,
-  arrayUnion,
 } from 'firebase/firestore/lite';
 import { getStorage, ref, uploadBytes } from 'firebase/storage';
 
@@ -22,17 +20,11 @@ import {
 const firebaseConfig = {
   // apiKey: process.env.FIRE_API_KEY <-------throws an error with authentication, works with hardcoding,
   apiKey: 'AIzaSyCDlQja-OMDJOXrMgx8qheIolHHE7ypErs',
-
   authDomain: 'react-df350.firebaseapp.com',
-
   databaseURL: 'https://react-df350.firebaseio.com',
-
   projectId: 'react-df350',
-
   storageBucket: 'react-df350.appspot.com',
-
   messagingSenderId: process.env.FIRE_SENDER_ID,
-
   appId: process.env.FIRE_APP_ID,
 };
 
@@ -47,22 +39,39 @@ const addData = async (pizzaData: BasePizza) => {
   try {
     const { brandName } = pizzaData;
     const dbRef = doc(db, 'pizzas', brandName);
-    const { pizzaName, price, pizzaCreator, imageList }: PizzaObject =
-      pizzaData;
+
+    const pizzaItem: PizzaObject = {
+      pizzaName: pizzaData.pizzaName,
+      price: pizzaData.price,
+      pizzaCreator: pizzaData.pizzaCreator,
+      imageList: pizzaData.imageList,
+    };
+
     const brandData: BrandData = { brandName };
     const brandItem: BrandObject = {
       brandInfo: brandData,
-      pizzaList: [
-        {
-          pizzaName,
-          price,
-          pizzaCreator,
-          imageList,
-        },
-      ],
+      pizzaList: [pizzaItem],
     };
-    const addedDoc = await setDoc(dbRef, brandItem, { merge: true });
-    return { status: true, data: addedDoc };
+    //Check if brand collection has already been created
+    const alreadyInDB = await getDataOfSingleBrand(brandName);
+
+    if (alreadyInDB) {
+      try {
+        //New list with new pizza item added
+        const newList = [pizzaItem, ...alreadyInDB.pizzaList];
+        //update brands collection
+        await updateDoc(dbRef, {
+          pizzaList: newList,
+        });
+        return { status: true };
+      } catch (e) {
+        throw new Error('Brand couldnt be updated with new pizza');
+      }
+    } else {
+      //Create new collection
+      await setDoc(dbRef, brandItem, { merge: false });
+      return { status: true };
+    }
   } catch (e) {
     return { status: false };
   }
@@ -115,7 +124,7 @@ const updatePizza = async (
         }
         return pizza;
       });
-      //update brands document
+      //update brands collection
       await updateDoc(docRef, {
         pizzaList: newList,
       });
@@ -132,11 +141,8 @@ const getDataOfSingleBrand = async (brand: string) => {
     const docRef = doc(db, 'pizzas', brand);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
-      // doc.data() is never undefined for query doc snapshots
-      // console.log('Document data:', docSnap.data());
       return docSnap.data();
     } else {
-      // doc.data() will be undefined in this case
       console.log('No such document!');
     }
   } catch (e) {
