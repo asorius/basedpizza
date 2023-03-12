@@ -1,10 +1,6 @@
 import React from 'react';
-import { getDataOfSinglePizza, updatePizza } from '../../firebase/app';
-import { useRouter } from 'next/router';
-import PizzaCard from '../../components/pizzaCard';
-import AuthRoute from '../../components/AuthRoute';
-import { BrandObject, SinglePizza } from '../../lib/types';
-import Layout from '../../components/Layout';
+import { updatePizza } from '../../firebase/app';
+
 import { getAuth } from 'firebase/auth';
 
 import {
@@ -13,21 +9,14 @@ import {
   SubmitHandler,
   SubmitErrorHandler,
 } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
 import { capitalized, compressImage } from '../../lib/utils';
-import {
-  Button,
-  FormControl,
-  InputLabel,
-  InputAdornment,
-  OutlinedInput,
-  FormHelperText,
-} from '@mui/material';
+import Loading from '../../lib/Loading';
+import { Button, FormControl, FormHelperText } from '@mui/material';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import ImagePreview from '../../components/ImagePreview';
 import { uploadHandler } from '../../firebase/app';
 
-export default function UploadImage(props: any) {
+export default function UploadImage(props: { name: string; brand: string }) {
   const auth = getAuth();
   const user = auth.currentUser;
   const [success, setSuccess] = React.useState(false);
@@ -55,7 +44,10 @@ export default function UploadImage(props: any) {
   const onSubmit: SubmitHandler<FormInputs> = async () => {
     const { name, brand } = props;
     try {
-      if (!image) return;
+      if (!image) {
+        console.log('No image selected');
+        return;
+      }
       if (brand && name) {
         const imageUploadResponse = await uploadHandler(image, brand, name);
         if (imageUploadResponse && user) {
@@ -78,24 +70,24 @@ export default function UploadImage(props: any) {
     console.log(error);
   };
   React.useEffect(() => {
-    reset(defaults);
-    setImages(null);
-    setSuccess(true);
+    if (isSubmitSuccessful) {
+      reset(defaults);
+      setImages(null);
+      setSuccess(true);
 
-    setTimeout(() => {
-      setSuccess(false);
-    }, 1500);
+      setTimeout(() => {
+        setSuccess(false);
+      }, 1500);
+    }
   }, [isSubmitSuccessful, reset]);
-  if (isSubmitting) {
-    return <h3>Uploading...</h3>;
-  }
-  if (success) {
-    return <h3>Success!</h3>;
-  }
+
   return (
     <>
       {isSubmitting ? (
-        <h3>Uploading...</h3>
+        <>
+          <h3>Uploading...</h3>
+          <Loading />
+        </>
       ) : success ? (
         <h3>Success!</h3>
       ) : (
