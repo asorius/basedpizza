@@ -8,10 +8,12 @@ import Layout from '../components/Layout';
 import Link from 'next/link';
 import { getAuth } from 'firebase/auth';
 import Search from '../components/searchComponent';
-import { app, getAllPizzas } from '../firebase/app';
+import { app, getAllPizzas, db } from '../firebase/app';
 import { BrandObject, PizzaObject } from 'lib/types';
 import Loading from 'lib/Loading';
 import { lazy } from 'react';
+import { collection, doc, onSnapshot, query } from 'firebase/firestore';
+
 const Main = lazy(() => import('../components/MainList'));
 export default function Home() {
   const [brands, setBrands] = React.useState<BrandObject[]>([]);
@@ -35,6 +37,18 @@ export default function Home() {
       setBrandsDB(brandsList);
     };
     getAllData();
+
+    const q = query(collection(db, 'pizzas'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const updated: any = [];
+      snapshot.forEach((doc) => updated.push(doc.data()));
+      //on addition/modification updates lists
+      setBrandsDB(updated);
+      setBrands(updated);
+    });
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   const inputController = (e: any) => {
@@ -108,13 +122,9 @@ export default function Home() {
         />
       )}
 
-      {brands ? (
-        <Suspense fallback={<Loading />}>
-          <Main brandObjects={brands} />
-        </Suspense>
-      ) : (
-        <h3>No brands found...</h3>
-      )}
+      <Suspense fallback={<Loading />}>
+        {brands && <Main brandObjects={brands} />}
+      </Suspense>
     </Layout>
   );
 }

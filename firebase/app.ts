@@ -1,4 +1,4 @@
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApps } from 'firebase/app';
 import {
   getFirestore,
   collection,
@@ -7,7 +7,7 @@ import {
   setDoc,
   getDoc,
   updateDoc,
-} from 'firebase/firestore/lite';
+} from 'firebase/firestore';
 import { getStorage, ref, uploadBytes } from 'firebase/storage';
 
 import {
@@ -27,8 +27,12 @@ const firebaseConfig = {
   messagingSenderId: process.env.FIRE_SENDER_ID,
   appId: process.env.FIRE_APP_ID,
 };
-
-const app = initializeApp(firebaseConfig);
+let app;
+if (getApps().length) {
+  console.log('App is already running..');
+} else {
+  app = initializeApp(firebaseConfig);
+}
 const db = getFirestore(app);
 const storage = getStorage(app);
 
@@ -182,6 +186,7 @@ const uploadHandler = async (file: File, brand: string, name: string) => {
     console.log(error);
   }
 };
+
 export {
   app,
   db,

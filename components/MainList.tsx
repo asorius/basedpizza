@@ -9,6 +9,7 @@ import { getAuth, signOut } from 'firebase/auth';
 import PizzaCard from './pizzaCardComponent';
 import { BrandObject, PizzaObject } from '../lib/types';
 import Loading from '../lib/Loading';
+import { doc, onSnapshot } from 'firebase/firestore';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -24,6 +25,7 @@ export default function BasicStack({ brandObjects }: Props) {
   const auth = getAuth();
   const user = auth.currentUser;
   const [isRendering, setRendering] = React.useState(true);
+
   React.useEffect(() => {
     setTimeout(() => setRendering(!isRendering), 500);
   }, []);
