@@ -103,6 +103,7 @@ export default function AdditionForm() {
   };
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     const { name, price, brand } = data;
+
     try {
       if (!image) return;
       const imageUploadResponse = await uploadHandler(image, brand, name);
@@ -158,15 +159,6 @@ export default function AdditionForm() {
               error={errors.hasOwnProperty('brand')}
               errorText={errors.brand?.message || ''}
             />
-
-            {/* <TextField
-                {...field}
-                variant='outlined'
-                label='Brand'
-                error={errors.hasOwnProperty('brand')}></TextField>
-              <FormHelperText>
-                {capitalized(errors.brand?.message)}
-              </FormHelperText> */}
           </FormControl>
         )}
       />
@@ -182,14 +174,6 @@ export default function AdditionForm() {
               error={errors.hasOwnProperty('name')}
               errorText={errors.name?.message || ''}
             />
-            {/* <TextField
-                  {...field}
-                  variant='outlined'
-                  label='Name'
-                  error={errors.hasOwnProperty('name')}></TextField>
-                <FormHelperText>
-                  {capitalized(errors.name?.message)}
-                </FormHelperText> */}
           </FormControl>
         )}
       />
@@ -211,6 +195,14 @@ export default function AdditionForm() {
           </FormControl>
         )}
       />
+      {/* <TextField
+                {...field}
+                variant='outlined'
+                label='Brand'
+                error={errors.hasOwnProperty('brand')}></TextField>
+              <FormHelperText>
+                {capitalized(errors.brand?.message)}
+              </FormHelperText> */}
       <FormControl error={errors.hasOwnProperty('image')}>
         <Button
           component='label'

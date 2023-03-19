@@ -24,22 +24,32 @@ export default function AutocompleteInput({
       <Autocomplete
         id='free-solo-demo'
         freeSolo
+        onChange={(e) => {
+          // Get index on according value from Material ui attribute
+          const idx = e.currentTarget.getAttribute('data-option-index');
+          if (idx) {
+            //idx comes as string, convert to number
+            const idxInt = parseInt(idx);
+            //Macth idx to value
+            const value = options[idxInt];
+            //Pass the value to react-hook-form controller
+            field.onChange(value);
+          }
+        }}
         options={options}
         renderInput={(params) => (
-          <>
-            <TextField
-              {...params}
-              {...field}
-              variant='outlined'
-              label={label}
-              onBlur={(e) => {
-                onBlur && onBlur(e);
-              }}
-              error={error}></TextField>
-            <FormHelperText>{capitalized(errorText)}</FormHelperText>
-          </>
+          <TextField
+            {...params}
+            {...field}
+            variant='outlined'
+            label={label}
+            onBlur={(e) => {
+              onBlur && onBlur(e);
+            }}
+            error={error}></TextField>
         )}
       />
+      <FormHelperText>{capitalized(errorText)}</FormHelperText>
     </Stack>
   );
 }
