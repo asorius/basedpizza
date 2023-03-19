@@ -15,15 +15,18 @@ import { Button, FormControl, FormHelperText } from '@mui/material';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import ImagePreview from '../ImagePreview';
 import { uploadHandler } from '../../firebase/app';
+interface FormInputs {
+  image: File | null;
+}
 
-export default function UploadImage(props: { name: string; brand: string }) {
+export default function UploadImage(props: {
+  name: string;
+  brand: string;
+  statusUpdate: (arg: boolean) => void;
+}) {
   const auth = getAuth();
   const user = auth.currentUser;
   const [success, setSuccess] = React.useState(false);
-
-  interface FormInputs {
-    image: File | null;
-  }
 
   const defaults = {
     image: null,
@@ -77,6 +80,7 @@ export default function UploadImage(props: { name: string; brand: string }) {
 
       setTimeout(() => {
         setSuccess(false);
+        props.statusUpdate(true);
       }, 1500);
     }
   }, [isSubmitSuccessful, reset]);

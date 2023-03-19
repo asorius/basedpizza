@@ -32,6 +32,7 @@ export default function PizzaCard({ brandInfo, pizzaItem, link, user }: Props) {
       });
       const urls = await Promise.all(promiseList).then((values) => values);
       setImages(urls);
+      console.log('images updated');
     };
     generateUrls();
   }, [pizzaItem.imageList]);

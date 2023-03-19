@@ -36,6 +36,7 @@ export default function Pizza() {
     null
   );
   const [pizzaCredentials, setPizzaCredentials] = React.useState<string[]>([]);
+  const [status, updateStatus] = React.useState<boolean>(false);
   React.useEffect(() => {
     const { pizzaDetails } = router.query;
     if (!pizzaDetails) {
@@ -55,7 +56,7 @@ export default function Pizza() {
       }
     };
     loadData();
-  }, [router]);
+  }, [router, status]);
 
   return (
     <Layout>
@@ -66,7 +67,11 @@ export default function Pizza() {
         />
       )}
       {user ? (
-        <UploadImage name={pizzaCredentials[0]} brand={pizzaCredentials[1]} />
+        <UploadImage
+          name={pizzaCredentials[0]}
+          brand={pizzaCredentials[1]}
+          statusUpdate={updateStatus}
+        />
       ) : (
         <h4>To upload your own image,REGISTER or SIGN IN</h4>
       )}
