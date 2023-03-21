@@ -14,23 +14,19 @@ import {
   InputAdornment,
   OutlinedInput,
   FormHelperText,
+  TextField,
 } from '@mui/material';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import ImagePreview from './ImagePreview';
-import {
-  addData,
-  getAllPizzas,
-  getDataOfSingleBrand,
-  getDataOfSinglePizza,
-  uploadHandler,
-} from '../firebase/app';
+import { addData, getAllPizzas, uploadHandler } from '../firebase/app';
 import { getAuth } from 'firebase/auth';
 import { useRouter } from 'next/router';
 
 import AutocompleteInput from '../lib/AutocompleteInput';
-import { BrandObject, PizzaObject } from '../lib/types';
+import CountrySelect from './searchComponent/CountrySelect';
 
 interface FormInputs {
+  country: string;
   name: string;
   brand: string;
   price: number | string;
@@ -38,6 +34,7 @@ interface FormInputs {
 }
 
 const defaults = {
+  country: '',
   name: '',
   brand: '',
   price: '',
@@ -62,38 +59,20 @@ export default function AdditionForm() {
   const [image, setImages] = React.useState<File | null>(null);
 
   const [brandNames, setBrandNames] = React.useState<any>([]);
-  const [selectedBrand, setSelectedBrand] = React.useState('');
-  const [pizzaNames, setPizzaNames] = React.useState<any>([]);
 
   React.useEffect(() => {
     const getBrands = async () => {
       const brandslist = await getAllPizzas();
       if (!brandslist) return;
-      //SOMETHING LIKE PIZZANAME(BRAND) {MAYBE?} AND THEN ON NAME SELECT IT AUTOFILS BRAND OPTION
-      //NAMES SCRAPPED FROM MAJOR BRANDS? POSSIBLY API FOR THAT?
       const brands = brandslist.map(
         (brandDataObject) => brandDataObject.brandInfo.brandName
       );
       setBrandNames(brands);
     };
+
     getBrands();
   }, []);
 
-  React.useEffect(() => {
-    const getPizzasInBrand = async () => {
-      const brandData = await getDataOfSingleBrand(selectedBrand);
-      if (!brandData) return;
-      const pizzaNames = brandData.pizzaList.map(
-        (pizzaItem: PizzaObject) => pizzaItem.pizzaName
-      );
-      setPizzaNames(pizzaNames);
-    };
-    getPizzasInBrand();
-  }, [selectedBrand]);
-
-  const blurAction = (e: any) => {
-    e.currentTarget.value && setSelectedBrand(e.currentTarget.value);
-  };
   React.useEffect(() => {
     reset(defaults);
     setImages(null);
@@ -146,16 +125,27 @@ export default function AdditionForm() {
       onSubmit={handleSubmit(onSubmit, errorHandler)}
       encType='multipart/form-data'>
       <Controller
+        name='country'
+        control={control}
+        render={({ field }) => (
+          <FormControl error={errors.hasOwnProperty('country')}>
+            <CountrySelect
+              label='Country'
+              field={field}
+              error={errors.hasOwnProperty('country')}
+              errorText={errors.country?.message || ''}></CountrySelect>
+          </FormControl>
+        )}
+      />
+      <Controller
         name='brand'
         control={control}
         render={({ field }) => (
           <FormControl error={errors.hasOwnProperty('brand')}>
-            {/* the input doesn't provide value to form data on submit */}
             <AutocompleteInput
               label='Brand'
               field={field}
               options={brandNames}
-              onBlur={blurAction}
               error={errors.hasOwnProperty('brand')}
               errorText={errors.brand?.message || ''}
             />
@@ -167,13 +157,12 @@ export default function AdditionForm() {
         control={control}
         render={({ field }) => (
           <FormControl error={errors.hasOwnProperty('name')}>
-            <AutocompleteInput
+            <TextField
+              {...field}
+              variant='outlined'
               label='Pizza name'
-              field={field}
-              options={pizzaNames}
-              error={errors.hasOwnProperty('name')}
-              errorText={errors.name?.message || ''}
-            />
+              error={errors.hasOwnProperty('name')}></TextField>
+            <FormHelperText>{capitalized(errors.name?.message)}</FormHelperText>
           </FormControl>
         )}
       />

@@ -3,6 +3,7 @@ import * as yup from 'yup';
 const capitalized = (word = '') => word.charAt(0).toUpperCase() + word.slice(1);
 const formValidationSchema = yup
   .object({
+    country: yup.string().required(),
     name: yup.string().min(3).max(30).required(),
     brand: yup.string().min(6).max(30).required(),
     price: yup

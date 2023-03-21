@@ -10,14 +10,12 @@ export default function AutocompleteInput({
   error,
   errorText,
   label,
-  onBlur,
 }: {
   options: string[];
   field: any;
   error: boolean;
   errorText: string;
   label: string;
-  onBlur?: (t: any) => void;
 }) {
   return (
     <Stack spacing={2} sx={{ width: 300 }}>
@@ -38,18 +36,17 @@ export default function AutocompleteInput({
         }}
         options={options}
         renderInput={(params) => (
-          <TextField
-            {...params}
-            {...field}
-            variant='outlined'
-            label={label}
-            onBlur={(e) => {
-              onBlur && onBlur(e);
-            }}
-            error={error}></TextField>
+          <>
+            <TextField
+              {...params}
+              {...field}
+              variant='outlined'
+              label={label}
+              error={error}></TextField>
+            <FormHelperText>{capitalized(errorText)}</FormHelperText>
+          </>
         )}
       />
-      <FormHelperText>{capitalized(errorText)}</FormHelperText>
     </Stack>
   );
 }
