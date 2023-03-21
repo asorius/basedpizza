@@ -101,6 +101,7 @@ export default function Home() {
     //Leave only the requested brand in the list to show filtered list
     foundBrandOriginal && setBrands([foundBrandOriginal]);
   }, [searchInput]);
+
   return (
     <Layout>
       {user ? (
@@ -112,19 +113,23 @@ export default function Home() {
           Can't find what you wanted? Register or sign to create a new Pizza.{' '}
         </h2>
       )}
-      {brands.length > 0 && (
-        <Search
-          onChangeController={inputController}
-          brandValue={searchInput.brand}
-          nameValue={searchInput.name}
-          brandList={brands}
-          selectedBrand={searchResult}
-        />
-      )}
+      {brands.length <= 0 ? (
+        <div>No pizzas in the Pizzabase yet.</div>
+      ) : (
+        <>
+          <Search
+            onChangeController={inputController}
+            brandValue={searchInput.brand}
+            nameValue={searchInput.name}
+            brandList={brands}
+            selectedBrand={searchResult}
+          />
 
-      <Suspense fallback={<Loading />}>
-        {brands && <Main brandObjects={brands} />}
-      </Suspense>
+          <Suspense fallback={<Loading />}>
+            <Main brandObjects={brands} />
+          </Suspense>
+        </>
+      )}
     </Layout>
   );
 }
