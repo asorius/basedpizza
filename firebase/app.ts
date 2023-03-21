@@ -89,25 +89,29 @@ export const addData = async (pizzaData: PizzaFormInput) => {
 };
 
 export const getDataOfSinglePizza = async (
+  countryName: string,
   brandName: string,
   pizzaName: string
 ) => {
   try {
-    const docRef = doc(db, 'pizzas', brandName);
+    const docRef = doc(db, 'pizzas', countryName);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
-      const brandItem = docSnap.data();
+      const countryItem = docSnap.data();
+      const requestedBrand = countryItem.brandsList.find(
+        (brandItem: BrandObject) => brandItem.info.name === brandName
+      );
       //Find the specific pizza
-      const requestedPizza: PizzaObject = brandItem.pizzaList.find(
+      const requestedPizza: PizzaObject = requestedBrand.pizzaList.find(
         (pizza: PizzaObject) => pizza.name === pizzaName
       );
-      if (!requestedPizza) throw new Error('Pizza not found');
-      const pizzaIndex = brandItem.pizzaList.indexOf(requestedPizza);
+      if (!requestedBrand || !requestedPizza)
+        throw new Error('Pizza not found');
+      requestedBrand.pizzlaList = [requestedPizza];
       //Return new brand object like item with requested pizza as the only pizza in the list (UN-SURE)
-      const response: SinglePizza = {
-        info: brandItem.info,
-        pizzaList: [requestedPizza],
-        pizzaIndex,
+      const response: CountryObject = {
+        info: countryItem.info,
+        brandsList: [requestedBrand],
       };
       return response;
     } else {

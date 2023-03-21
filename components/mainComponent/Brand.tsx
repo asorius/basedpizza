@@ -20,8 +20,9 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 interface Props {
   brandObjects: BrandObject[];
+  countryName: string;
 }
-export default function Main({ brandObjects }: Props) {
+export default function Main({ brandObjects, countryName }: Props) {
   const auth = getAuth();
   const user = auth.currentUser;
   const [isRendering, setRendering] = React.useState(true);
@@ -50,7 +51,7 @@ export default function Main({ brandObjects }: Props) {
                     brandInfo={brandItem.info}
                     pizzaItem={pizzaItem}
                     user={user}
-                    link={`/pizzas/${brandItem.info.name}/${pizzaName}`}
+                    link={`/pizzas/${countryName}/${brandItem.info.name}/${pizzaName}`}
                   />
                 );
               })}

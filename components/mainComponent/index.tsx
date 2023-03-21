@@ -37,7 +37,9 @@ export default function Main({ countryObjects }: Props) {
               <Typography variant='h3' gutterBottom>
                 {countryItem.info.name}
               </Typography>
-              <Brand brandObjects={brandsList}></Brand>
+              <Brand
+                brandObjects={brandsList}
+                countryName={countryItem.info.name}></Brand>
             </Item>
           );
         })}

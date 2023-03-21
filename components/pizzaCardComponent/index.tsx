@@ -8,17 +8,29 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { storage } from '../../firebase/app';
 import { ref, getDownloadURL } from 'firebase/storage';
-import { BrandData, BrandObject, PizzaObject } from '../../lib/types';
+import {
+  BrandData,
+  BrandObject,
+  CountryData,
+  PizzaObject,
+} from '../../lib/types';
 import Loading from '../../lib/Loading';
 import ImageDisplay from './ImageDisplay';
 
 interface Props {
+  countryInfo?: CountryData;
   brandInfo: BrandData;
   pizzaItem: PizzaObject;
   link?: any;
   user?: any;
 }
-export default function PizzaCard({ brandInfo, pizzaItem, link, user }: Props) {
+export default function PizzaCard({
+  countryInfo,
+  brandInfo,
+  pizzaItem,
+  link,
+  user,
+}: Props) {
   const [imageUrls, setImages] = React.useState<string[]>([]);
   React.useEffect(() => {
     const generateUrls = async () => {
@@ -45,6 +57,9 @@ export default function PizzaCard({ brandInfo, pizzaItem, link, user }: Props) {
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardContent>
+        <Typography gutterBottom variant='h5' component='div'>
+          {countryInfo?.name}
+        </Typography>
         <Typography gutterBottom variant='h5' component='div'>
           {pizzaItem.name}
         </Typography>

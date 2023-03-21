@@ -3,7 +3,7 @@ import { getDataOfSinglePizza, updatePizza } from '../../firebase/app';
 import { useRouter } from 'next/router';
 import PizzaCard from '../../components/pizzaCardComponent';
 import AuthRoute from '../../components/AuthRoute';
-import { BrandObject, SinglePizza } from '../../lib/types';
+import { BrandObject, CountryObject, SinglePizza } from '../../lib/types';
 import Layout from '../../components/Layout';
 import { getAuth } from 'firebase/auth';
 
@@ -32,7 +32,7 @@ export default function Pizza() {
   const auth = getAuth();
   const user = auth.currentUser;
   const router = useRouter();
-  const [searchResult, setSearchResult] = React.useState<SinglePizza | null>(
+  const [searchResult, setSearchResult] = React.useState<CountryObject | null>(
     null
   );
   const [pizzaCredentials, setPizzaCredentials] = React.useState<string[]>([]);
@@ -42,12 +42,13 @@ export default function Pizza() {
     if (!pizzaDetails) {
       return;
     }
-    const brand = pizzaDetails[0];
-    const name = pizzaDetails[1];
+    const country = pizzaDetails[0];
+    const brand = pizzaDetails[1];
+    const name = pizzaDetails[2];
     setPizzaCredentials([name, brand]);
     const loadData = async () => {
-      if (brand && name) {
-        const response = await getDataOfSinglePizza(brand, name);
+      if (country && brand && name) {
+        const response = await getDataOfSinglePizza(country, brand, name);
         if (!response) {
           router.push('/');
           return;
@@ -62,14 +63,15 @@ export default function Pizza() {
     <Layout>
       {searchResult && (
         <PizzaCard
-          brandInfo={searchResult.brandInfo}
-          pizzaItem={searchResult.pizzaList[0]}
+          countryInfo={searchResult.info}
+          brandInfo={searchResult.brandsList[0].info}
+          pizzaItem={searchResult.brandsList[0].pizzaList[0]}
         />
       )}
       {user ? (
         <UploadImage
-          name={pizzaCredentials[0]}
-          brand={pizzaCredentials[1]}
+          name={pizzaCredentials[1]}
+          brand={pizzaCredentials[2]}
           statusUpdate={updateStatus}
         />
       ) : (
