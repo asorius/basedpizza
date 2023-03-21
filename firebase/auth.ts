@@ -6,7 +6,7 @@ import {
 import { app } from './app';
 
 // Initialize Firebase Authentication and get a reference to the service
-const auth = getAuth(app);
+const auth = getAuth();
 interface IUserInput {
   email: string;
   password: string;

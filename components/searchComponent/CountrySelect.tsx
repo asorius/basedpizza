@@ -17,6 +17,18 @@ export default function CountrySelect(props: {
       sx={{ width: 300 }}
       options={countries}
       autoHighlight
+      onChange={(e) => {
+        // Get index on according value from Material ui attribute
+        const idx = e.currentTarget.getAttribute('data-option-index');
+        if (idx) {
+          //idx comes as string, convert to number
+          const idxInt = parseInt(idx);
+          //Macth idx to value
+          const value = countries[idxInt].label;
+          //Pass the value to react-hook-form controller
+          props.field.onChange(value);
+        }
+      }}
       getOptionLabel={(option) => option.label}
       renderOption={(props, option) => (
         <Box

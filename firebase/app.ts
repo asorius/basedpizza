@@ -16,6 +16,9 @@ import {
   BrandObject,
   BrandData,
   SinglePizza,
+  CountryData,
+  CountryObject,
+  PizzaFormInput,
 } from '../lib/types';
 const firebaseConfig = {
   // apiKey: process.env.FIRE_API_KEY <-------throws an error with authentication, works with hardcoding,
@@ -33,47 +36,51 @@ if (getApps().length) {
 } else {
   app = initializeApp(firebaseConfig);
 }
-const db = getFirestore(app);
-const storage = getStorage(app);
+// export app;
+export const db = getFirestore(app);
+export const storage = getStorage(app);
 
-interface BasePizza extends PizzaObject {
-  brandName: string;
-}
-const addData = async (pizzaData: BasePizza) => {
+export const addData = async (pizzaData: PizzaFormInput) => {
   try {
-    const { brandName } = pizzaData;
-    const dbRef = doc(db, 'pizzas', brandName);
+    const { brandName, countryName } = pizzaData;
+    const dbRef = doc(db, 'pizzas', countryName);
 
     const pizzaItem: PizzaObject = {
-      pizzaName: pizzaData.pizzaName,
+      name: pizzaData.pizzaName,
       price: pizzaData.price,
-      pizzaCreator: pizzaData.pizzaCreator,
+      creator: pizzaData.pizzaCreator,
       imageList: pizzaData.imageList,
     };
 
-    const brandData: BrandData = { brandName };
+    const brandData: BrandData = { name: brandName };
+    const countryData: CountryData = { name: countryName };
     const brandItem: BrandObject = {
-      brandInfo: brandData,
+      info: brandData,
       pizzaList: [pizzaItem],
     };
+    const countryItem: CountryObject = {
+      info: countryData,
+      brandsList: [brandItem],
+    };
     //Check if brand collection has already been created
-    const alreadyInDB = await getDataOfSingleBrand(brandName);
+    const alreadyInDB = false;
+    // const alreadyInDB = await getDataOfSingleBrand(brandName, countryName);
 
     if (alreadyInDB) {
-      try {
-        //New list with new pizza item added
-        const newList = [pizzaItem, ...alreadyInDB.pizzaList];
-        //update brands collection
-        await updateDoc(dbRef, {
-          pizzaList: newList,
-        });
-        return { status: true };
-      } catch (e) {
-        throw new Error('Brand couldnt be updated with new pizza');
-      }
+      // try {
+      //   //New list with new pizza item added
+      //   const newList = [pizzaItem, ...alreadyInDB.pizzaList];
+      //   //update brands collection
+      //   await updateDoc(dbRef, {
+      //     pizzaList: newList,
+      //   });
+      //   return { status: true };
+      // } catch (e) {
+      //   throw new Error('Brand couldnt be updated with new pizza');
+      // }
     } else {
-      //Create new collection
-      await setDoc(dbRef, brandItem, { merge: false });
+      //Add new document *countryName* collection
+      await setDoc(dbRef, countryItem, { merge: false });
       return { status: true };
     }
   } catch (e) {
@@ -81,7 +88,10 @@ const addData = async (pizzaData: BasePizza) => {
   }
 };
 
-const getDataOfSinglePizza = async (brandName: string, pizzaName: string) => {
+export const getDataOfSinglePizza = async (
+  brandName: string,
+  pizzaName: string
+) => {
   try {
     const docRef = doc(db, 'pizzas', brandName);
     const docSnap = await getDoc(docRef);
@@ -89,13 +99,13 @@ const getDataOfSinglePizza = async (brandName: string, pizzaName: string) => {
       const brandItem = docSnap.data();
       //Find the specific pizza
       const requestedPizza: PizzaObject = brandItem.pizzaList.find(
-        (pizza: PizzaObject) => pizza.pizzaName === pizzaName
+        (pizza: PizzaObject) => pizza.name === pizzaName
       );
       if (!requestedPizza) throw new Error('Pizza not found');
       const pizzaIndex = brandItem.pizzaList.indexOf(requestedPizza);
       //Return new brand object like item with requested pizza as the only pizza in the list (UN-SURE)
       const response: SinglePizza = {
-        brandInfo: brandItem.brandInfo,
+        info: brandItem.info,
         pizzaList: [requestedPizza],
         pizzaIndex,
       };
@@ -108,7 +118,7 @@ const getDataOfSinglePizza = async (brandName: string, pizzaName: string) => {
     throw new Error('Could not connect to database');
   }
 };
-const updatePizza = async (
+export const updatePizza = async (
   brandName: string,
   pizzaName: string,
   newImage: ImageObject
@@ -117,15 +127,12 @@ const updatePizza = async (
     console.log({ brandName, pizzaName });
     const docRef = doc(db, 'pizzas', brandName);
     //Get required brand with all pizzas
-    const brand = await getDataOfSingleBrand(brandName);
+    const brand = await getDataOfSingleBrand(brandName, null);
     if (brand) {
       //Iterate through all pizzas in that brand, add image to the pizza with matching name
-      const newList = brand.pizzaList.map((pizza: any) => {
+      const newList = brand.pizzaList.map((pizza: PizzaObject) => {
         //If pizza names match and there isn't already that image in there, push it
-        if (
-          pizza.pizzaName === pizzaName &&
-          !pizza.imageList.includes(newImage)
-        ) {
+        if (pizza.name === pizzaName && !pizza.imageList.includes(newImage)) {
           pizza.imageList.push(newImage);
         }
         return pizza;
@@ -140,11 +147,60 @@ const updatePizza = async (
     throw new Error('Could not connect to database');
   }
 };
-const getDataOfSingleBrand = async (brand: string) => {
+export const getDataOfSingleBrand = async (
+  brand: string,
+  country: string | null
+) => {
   if (!brand) return;
   try {
     console.log('getting data...');
-    const docRef = doc(db, 'pizzas', brand);
+    const allCountries = await getAllPizzas();
+    if (!allCountries) {
+      console.log('coudlnt get all countries');
+      return;
+    }
+    let requiredResponse;
+    if (country) {
+      //If we want to return brand from specific country
+      const requiredCountry: CountryObject = allCountries.find(
+        (countryElement: CountryObject) => countryElement.info.name === country
+      );
+      requiredResponse = requiredCountry.brandsList.find(
+        (brandElement: BrandObject) => brandElement.info.name === brand
+      );
+    } else {
+      //otherwise return a list of countries with a list of its brands that is required
+      const finalList = allCountries.reduce(
+        (accumulator, countryElement: CountryObject) => {
+          const countryBrandNames = countryElement.brandsList.map(
+            (brandElement: BrandObject) => brandElement.info.name
+          );
+          if (countryBrandNames.includes(brand)) {
+            return accumulator.push(countryElement);
+          }
+        },
+        []
+      );
+      requiredResponse = finalList;
+    }
+    return requiredResponse;
+    //Return specific brand from all countries
+    // const docRef = doc(db, 'pizzas', country);
+    // const docSnap = await getDoc(docRef);
+    // if (docSnap.exists()) {
+    //   return docSnap.data();
+    // } else {
+    //   console.log('No such document!');
+    // }
+  } catch (e) {
+    console.log(e);
+  }
+};
+export const getDataOfSingleCountry = async (country: string) => {
+  if (!country) return;
+  try {
+    console.log('getting data...');
+    const docRef = doc(db, 'pizzas', country);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       return docSnap.data();
@@ -155,21 +211,25 @@ const getDataOfSingleBrand = async (brand: string) => {
     console.log(e);
   }
 };
-const getAllPizzas = async () => {
+export const getAllPizzas = async () => {
   try {
     const querySnapshot = await getDocs(collection(db, 'pizzas'));
-    //Set type to BrandObject, but for now the doc.data() interferes by adding DocumentData propery, IDK how to avoid it atm
-    let brandList: any[] = [];
+    //Should set type to CountryObject, but for now the doc.data() interferes by adding DocumentData propery, IDK how to avoid it atm
+    let countryList: any[] = [];
     querySnapshot.forEach((doc) => {
-      const brandItem = doc.data();
-      brandList.push(brandItem);
+      const countryItem = doc.data();
+      countryList.push(countryItem);
     });
-    return brandList;
+    return countryList;
   } catch (error) {
     console.log(error);
   }
 };
-const uploadHandler = async (file: File, brand: string, name: string) => {
+export const uploadHandler = async (
+  file: File,
+  brand: string,
+  name: string
+) => {
   const storageLocation = `${brand}/${name}/${file.name}`;
   const storageRef = ref(storage, storageLocation);
   try {
@@ -185,17 +245,4 @@ const uploadHandler = async (file: File, brand: string, name: string) => {
   } catch (error) {
     console.log(error);
   }
-};
-
-export {
-  app,
-  db,
-  storage,
-  uploadHandler,
-  addData,
-  getDataOfSinglePizza,
-  getDataOfSingleBrand,
-  getAllPizzas,
-  updatePizza,
-  firebaseConfig,
 };

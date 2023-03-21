@@ -8,7 +8,7 @@ import Loading from '../../lib/Loading';
 import AuthRoute from 'components/AuthRoute';
 const Addition = lazy(() => import('../../components/AdditionForm'));
 export default function PizzaForm() {
-  const auth = getAuth(app);
+  const auth = getAuth();
   const user = auth.currentUser;
 
   return (

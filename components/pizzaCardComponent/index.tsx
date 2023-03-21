@@ -46,10 +46,10 @@ export default function PizzaCard({ brandInfo, pizzaItem, link, user }: Props) {
     <Card sx={{ maxWidth: 345 }}>
       <CardContent>
         <Typography gutterBottom variant='h5' component='div'>
-          {pizzaItem.pizzaName}
+          {pizzaItem.name}
         </Typography>
         <Typography gutterBottom variant='h5' component='div'>
-          {brandInfo.brandName}
+          {brandInfo.name}
         </Typography>
 
         <Typography variant='body2' color='text.secondary'>

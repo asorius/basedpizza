@@ -81,10 +81,11 @@ export default function AdditionForm() {
     setImages(null);
   };
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
-    const { name, price, brand } = data;
+    const { name, price, brand, country } = data;
 
     try {
       if (!image) return;
+      //NOT SURE IF COUNTRY SHOULD AFFECT THE IMAGE STORAGE  ***FOR LATER
       const imageUploadResponse = await uploadHandler(image, brand, name);
       //if image has been uploaded successfully and a reference to it has been returned
       if (imageUploadResponse && user) {
@@ -102,13 +103,14 @@ export default function AdditionForm() {
           pizzaName: name,
           price: +price,
           brandName: brand,
+          countryName: country,
           pizzaCreator: userId,
           imageList: [imageObject],
         });
-        if (pizzaAddResponse.status) {
-          router.push(`/pizzas/${brand}/${name}`);
-          console.log(pizzaAddResponse);
-        }
+        // if (pizzaAddResponse.status) {
+        //   router.push(`/pizzas/${brand}/${name}`);
+        //   console.log(pizzaAddResponse);
+        // }
       }
     } catch (error) {
       console.log(error);

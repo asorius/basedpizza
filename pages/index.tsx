@@ -8,16 +8,20 @@ import Layout from '../components/Layout';
 import Link from 'next/link';
 import { getAuth } from 'firebase/auth';
 import Search from '../components/searchComponent';
-import { app, getAllPizzas, db } from '../firebase/app';
+import { getAllPizzas, db } from '../firebase/app';
 import { BrandObject, PizzaObject } from 'lib/types';
 import Loading from 'lib/Loading';
 import { lazy } from 'react';
 import { collection, doc, onSnapshot, query } from 'firebase/firestore';
 
-const Main = lazy(() => import('../components/MainList'));
+const Main = lazy(() => import('../components/mainComponent'));
 export default function Home() {
   const [brands, setBrands] = React.useState<BrandObject[]>([]);
+  const [countries, setCountries] = React.useState<BrandObject[]>([]);
   const [brandsDB, setBrandsDB] = React.useState<BrandObject[]>([]);
+  const [countriesOriginal, setCountriesOriginal] = React.useState<
+    BrandObject[]
+  >([]);
   const [searchResult, setSearchResult] = React.useState<BrandObject | null>(
     null
   );
@@ -27,14 +31,15 @@ export default function Home() {
       name: '',
     }
   );
-  const auth = getAuth(app);
+  const auth = getAuth();
   const user = auth.currentUser;
   React.useEffect(() => {
     const getAllData = async () => {
-      const brandsList = await getAllPizzas();
-      if (!brandsList) return;
-      setBrands(brandsList);
-      setBrandsDB(brandsList);
+      const countriesList = await getAllPizzas();
+      if (!countriesList) return;
+      // setBrandsDB(countriesList);
+      setCountries(countriesList);
+      setCountriesOriginal(countriesList);
     };
     getAllData();
 
@@ -71,10 +76,10 @@ export default function Home() {
       return;
     }
     const foundBrandOriginal = brandsDB.find(
-      (brand: BrandObject) => brand.brandInfo.brandName === brandInputValue
+      (brand: BrandObject) => brand.info.name === brandInputValue
     );
     //Check if new brand has been selected
-    if (searchResult && brandInputValue !== searchResult?.brandInfo.brandName) {
+    if (searchResult && brandInputValue !== searchResult?.info.name) {
       setSearchInput((previous) => ({ ...previous, name: '' }));
     }
 
@@ -89,7 +94,7 @@ export default function Home() {
         return;
       }
       const listWithRequiredPizza = foundBrandOriginal.pizzaList.filter(
-        (pizza: PizzaObject) => pizza.pizzaName === nameInputValue
+        (pizza: PizzaObject) => pizza.name === nameInputValue
       );
       const newResult = { ...searchResult, pizzaList: listWithRequiredPizza };
       //Update brands pizza list for display with that single pizza in the list
@@ -113,7 +118,14 @@ export default function Home() {
           Can't find what you wanted? Register or sign to create a new Pizza.{' '}
         </h2>
       )}
-      {brands.length <= 0 ? (
+      {countries.length ? (
+        <>
+          <Main countryObjects={countries}></Main>
+        </>
+      ) : (
+        <div>no</div>
+      )}
+      {/* {brands.length <= 0 ? (
         <div>No pizzas in the Pizzabase yet.</div>
       ) : (
         <>
@@ -129,7 +141,7 @@ export default function Home() {
             <Main brandObjects={brands} />
           </Suspense>
         </>
-      )}
+      )} */}
     </Layout>
   );
 }
