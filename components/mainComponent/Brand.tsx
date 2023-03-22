@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import { getAuth, signOut } from 'firebase/auth';
 
 import PizzaCard from '../pizzaCardComponent';
-import { BrandObject, PizzaObject } from '../../lib/types';
+import { BrandObject, PizzaObject, PizzasList } from '../../lib/types';
 import Loading from '../../lib/Loading';
 import { doc, onSnapshot } from 'firebase/firestore';
 
@@ -19,35 +19,40 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 interface Props {
-  brandObjects: BrandObject[];
+  brandsObject: BrandObject;
   countryName: string;
 }
-export default function Main({ brandObjects, countryName }: Props) {
+export default function Main({ brandsObject, countryName }: Props) {
   const auth = getAuth();
   const user = auth.currentUser;
   const [isRendering, setRendering] = React.useState(true);
+  const brandsArray = React.useMemo(
+    () => Object.entries(brandsObject),
+    [brandsObject]
+  );
 
   React.useEffect(() => {
-    setTimeout(() => setRendering(!isRendering), 500);
+    setTimeout(() => setRendering(!isRendering), 100);
   }, []);
   if (isRendering) {
     return <Loading />;
   }
+
   return (
     <Box sx={{ width: '100%' }}>
       <Stack spacing={2}>
-        {brandObjects.map((brandItem: BrandObject, i: number) => {
-          const pizzaList: PizzaObject[] = brandItem.pizzaList;
+        {brandsArray.map(([name, brandItem]) => {
+          const pizzaList: PizzasList = brandItem.pizzaList;
           return (
-            <Item key={i}>
+            <Item key={name}>
               <Typography variant='h3' gutterBottom>
                 {brandItem.info.name}
               </Typography>
-              {pizzaList.map((pizzaItem: PizzaObject, index: number) => {
+              {Object.entries(pizzaList).map(([name, pizzaItem]) => {
                 const pizzaName = pizzaItem.name;
                 return (
                   <PizzaCard
-                    key={index}
+                    key={name}
                     brandInfo={brandItem.info}
                     pizzaItem={pizzaItem}
                     user={user}

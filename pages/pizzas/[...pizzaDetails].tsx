@@ -3,7 +3,12 @@ import { getDataOfSinglePizza, updatePizza } from '../../firebase/app';
 import { useRouter } from 'next/router';
 import PizzaCard from '../../components/pizzaCardComponent';
 import AuthRoute from '../../components/AuthRoute';
-import { BrandObject, CountryObject, SinglePizza } from '../../lib/types';
+import {
+  BrandObject,
+  BrandsList,
+  CountryObject,
+  SinglePizza,
+} from '../../lib/types';
 import Layout from '../../components/Layout';
 import { getAuth } from 'firebase/auth';
 
@@ -32,20 +37,26 @@ export default function Pizza() {
   const auth = getAuth();
   const user = auth.currentUser;
   const router = useRouter();
-  const [searchResult, setSearchResult] = React.useState<CountryObject | null>(
-    null
-  );
-  const [pizzaCredentials, setPizzaCredentials] = React.useState<string[]>([]);
+  const [resultCountryObject, setSearchResult] =
+    React.useState<CountryObject | null>(null);
+  const [pizzaCredentials, setPizzaCredentials] = React.useState<{
+    country: string;
+    brand: string;
+    name: string;
+  } | null>(null);
   const [status, updateStatus] = React.useState<boolean>(false);
+  const [brandObject, setBrand] = React.useState<BrandObject | null>(null);
   React.useEffect(() => {
     const { pizzaDetails } = router.query;
+    console.log(pizzaDetails);
     if (!pizzaDetails) {
       return;
     }
+    // downlevelIteration typescript error, doing old-way
     const country = pizzaDetails[0];
     const brand = pizzaDetails[1];
     const name = pizzaDetails[2];
-    setPizzaCredentials([name, brand]);
+    setPizzaCredentials({ country, brand, name });
     const loadData = async () => {
       if (country && brand && name) {
         const response = await getDataOfSinglePizza(country, brand, name);
@@ -54,6 +65,7 @@ export default function Pizza() {
           return;
         }
         setSearchResult(response);
+        setBrand(response.brandsList[brand]);
       }
     };
     loadData();
@@ -61,17 +73,18 @@ export default function Pizza() {
 
   return (
     <Layout>
-      {searchResult && (
+      {resultCountryObject && brandObject && pizzaCredentials && (
         <PizzaCard
-          countryInfo={searchResult.info}
-          brandInfo={searchResult.brandsList[0].info}
-          pizzaItem={searchResult.brandsList[0].pizzaList[0]}
+          countryInfo={resultCountryObject.info}
+          brandInfo={brandObject.info}
+          pizzaItem={brandObject.pizzaList[pizzaCredentials.name]}
         />
       )}
-      {user ? (
+      {user && pizzaCredentials ? (
         <UploadImage
-          name={pizzaCredentials[1]}
-          brand={pizzaCredentials[2]}
+          country={pizzaCredentials.country}
+          brand={pizzaCredentials.brand}
+          name={pizzaCredentials.name}
           statusUpdate={updateStatus}
         />
       ) : (

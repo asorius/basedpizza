@@ -9,6 +9,7 @@ export interface PizzaObject {
   price: number;
   imageList: ImageObject[] | [];
 }
+
 export interface BrandData {
   name: string;
   rating?: number;
@@ -17,13 +18,19 @@ export interface CountryData {
   name: string;
   rating?: number;
 }
+export interface PizzasList {
+  [name: string]: PizzaObject;
+}
 export interface BrandObject {
   info: BrandData;
-  pizzaList: PizzaObject[];
+  pizzaList: PizzasList;
+}
+export interface BrandsList {
+  [name: string]: BrandObject;
 }
 export interface CountryObject {
   info: CountryData;
-  brandsList: BrandObject[];
+  brandsList: BrandsList;
 }
 export interface SinglePizza extends BrandObject {
   pizzaIndex: number;

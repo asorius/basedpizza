@@ -64,12 +64,13 @@ export default function AdditionForm() {
     const getBrands = async () => {
       const brandslist = await getAllPizzas();
       if (!brandslist) return;
-      const brands = brandslist.map(
-        (brandDataObject) => brandDataObject.brandInfo.brandName
-      );
-      setBrandNames(brands);
+      const brandNameList = Object.keys(brandslist);
+      // const brands = brandslist.map(
+      //   (brandDataObject) => brandDataObject.brandInfo.name
+      // );
+      // setBrandNames(brandNameList);
+      console.log(brandNameList);
     };
-
     getBrands();
   }, []);
 

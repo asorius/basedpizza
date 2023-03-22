@@ -15,6 +15,7 @@ import { Button, FormControl, FormHelperText } from '@mui/material';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import ImagePreview from '../ImagePreview';
 import { uploadHandler } from '../../firebase/app';
+import { ImageObject } from 'lib/types';
 interface FormInputs {
   image: File | null;
 }
@@ -22,6 +23,7 @@ interface FormInputs {
 export default function UploadImage(props: {
   name: string;
   brand: string;
+  country: string;
   statusUpdate: (arg: boolean) => void;
 }) {
   const auth = getAuth();
@@ -45,24 +47,25 @@ export default function UploadImage(props: {
     defaultValues: defaults,
   });
   const onSubmit: SubmitHandler<FormInputs> = async () => {
-    const { name, brand } = props;
+    const { name, brand, country } = props;
+    console.log(props);
     try {
       if (!image) {
         console.log('No image selected');
         return;
       }
-      if (brand && name) {
+      if (country && brand && name) {
         const imageUploadResponse = await uploadHandler(image, brand, name);
         if (imageUploadResponse && user) {
           const userId = user.uid;
           //create image object with references
-          const imageObject = {
+          const imageObject: ImageObject = {
             creator: userId,
             imageRef: imageUploadResponse.ref,
             timeStamp: imageUploadResponse.timeCreated,
           };
 
-          await updatePizza(brand, name, imageObject);
+          await updatePizza(country, brand, name, imageObject);
         }
       }
     } catch (error) {

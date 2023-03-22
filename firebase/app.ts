@@ -52,15 +52,25 @@ export const addData = async (pizzaData: PizzaFormInput) => {
       imageList: pizzaData.imageList,
     };
 
+    const pizzaList = { [pizzaData.pizzaName]: pizzaItem };
+    // const pizzaItem ={
+    //   name: pizzaData.pizzaName,
+    //   price: pizzaData.price,
+    //   creator: pizzaData.pizzaCreator,
+    //   imageList: pizzaData.imageList,
+    // };
+
     const brandData: BrandData = { name: brandName };
     const countryData: CountryData = { name: countryName };
+
     const brandItem: BrandObject = {
       info: brandData,
-      pizzaList: [pizzaItem],
+      pizzaList,
     };
+
     const countryItem: CountryObject = {
       info: countryData,
-      brandsList: [brandItem],
+      brandsList: { [brandName]: brandItem },
     };
     //Check if brand collection has already been created
     const alreadyInDB = false;
@@ -80,7 +90,10 @@ export const addData = async (pizzaData: PizzaFormInput) => {
       // }
     } else {
       //Add new document *countryName* collection
-      await setDoc(dbRef, countryItem, { merge: false });
+      await setDoc(dbRef, countryItem, {
+        merge: false,
+      });
+
       return { status: true };
     }
   } catch (e) {
@@ -98,21 +111,18 @@ export const getDataOfSinglePizza = async (
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       const countryItem = docSnap.data();
-      const requestedBrand = countryItem.brandsList.find(
-        (brandItem: BrandObject) => brandItem.info.name === brandName
-      );
+      const requestedBrand = countryItem.brandsList[brandName];
       //Find the specific pizza
-      const requestedPizza: PizzaObject = requestedBrand.pizzaList.find(
-        (pizza: PizzaObject) => pizza.name === pizzaName
-      );
+      const requestedPizza: PizzaObject = requestedBrand.pizzaList[pizzaName];
       if (!requestedBrand || !requestedPizza)
         throw new Error('Pizza not found');
-      requestedBrand.pizzlaList = [requestedPizza];
+      requestedBrand.pizzaList = { [pizzaName]: requestedPizza };
       //Return new brand object like item with requested pizza as the only pizza in the list (UN-SURE)
       const response: CountryObject = {
         info: countryItem.info,
-        brandsList: [requestedBrand],
+        brandsList: { [brandName]: requestedBrand },
       };
+      console.log(response);
       return response;
     } else {
       console.log('No such document!');
@@ -123,28 +133,48 @@ export const getDataOfSinglePizza = async (
   }
 };
 export const updatePizza = async (
+  countryName: string,
   brandName: string,
   pizzaName: string,
   newImage: ImageObject
 ) => {
   try {
-    console.log({ brandName, pizzaName });
-    const docRef = doc(db, 'pizzas', brandName);
-    //Get required brand with all pizzas
-    const brand = await getDataOfSingleBrand(brandName, null);
-    if (brand) {
-      //Iterate through all pizzas in that brand, add image to the pizza with matching name
-      const newList = brand.pizzaList.map((pizza: PizzaObject) => {
+    // console.log({ brandName, pizzaName });
+    const countryDocumenetRef = doc(db, 'pizzas', countryName);
+    //Get required brand with all  pizzas to loop over
+    const brandObject: BrandObject = await getDataOfSingleBrand(
+      brandName,
+      countryName
+    );
+    if (brandObject && newImage) {
+      console.log(brandObject);
+      // Iterate through all pizzas in that brand, add image to the pizza with matching name
+      const newList = brandObject.pizzaList.map((pizza: PizzaObject) => {
         //If pizza names match and there isn't already that image in there, push it
         if (pizza.name === pizzaName && !pizza.imageList.includes(newImage)) {
           pizza.imageList.push(newImage);
         }
         return pizza;
       });
-      //Update brands collection with the new list
-      await updateDoc(docRef, {
-        pizzaList: newList,
+      //Iterate through all pizzas in that brand, add image to the pizza with matching name
+      // const newList = countryObject.brandsList.map((brand: BrandObject) => {
+      //   //If pizza names match and there isn't already that image in there, push it
+      //   if (pizza.name === pizzaName && !pizza.imageList.includes(newImage)) {
+      //     pizza.imageList.push(newImage);
+      //   }
+      //   return pizza;
+      // });
+      // Update brands collection with the new list
+      // await db.collection('pizzas').doc(countryName).update(
+      //   {
+
+      // }});
+      await updateDoc(countryDocumenetRef, {
+        'brandsList[0].pizzaList': newList,
       });
+      // await updateDoc(docRef, {
+      //   pizzaList: newList,
+      // });
     }
   } catch (e) {
     console.log(e);
@@ -165,26 +195,31 @@ export const getDataOfSingleBrand = async (
     }
     let requiredResponse;
     if (country) {
-      //If we want to return brand from specific country
-      const requiredCountry: CountryObject = allCountries.find(
+      //If we want to return brand from a specific country
+      const requiredCountry: CountryObject | undefined = allCountries.find(
         (countryElement: CountryObject) => countryElement.info.name === country
       );
-      requiredResponse = requiredCountry.brandsList.find(
-        (brandElement: BrandObject) => brandElement.info.name === brand
-      );
+      if (requiredCountry) {
+        requiredResponse = requiredCountry.brandsList[brand];
+      }
     } else {
       //otherwise return a list of countries with a list of its brands that is required
-      const finalList = allCountries.reduce(
-        (accumulator, countryElement: CountryObject) => {
-          const countryBrandNames = countryElement.brandsList.map(
-            (brandElement: BrandObject) => brandElement.info.name
-          );
-          if (countryBrandNames.includes(brand)) {
-            return accumulator.push(countryElement);
-          }
-        },
-        []
-      );
+      const finalList = allCountries.filter((countryElement: CountryObject) => {
+        const countryBrandNames = Object.keys(countryElement.brandsList);
+        if (countryBrandNames.includes(brand)) {
+          countryElement;
+        }
+      });
+      // const finalList = allCountries.reduce(
+      //   (accumulator, countryElement: CountryObject) => {
+      //     const countryBrandNames = Object.keys(countryElement.brandsList);
+      //     if (countryBrandNames.includes(brand)) {
+      //       return [...accumulator, countryElement];
+      //     }
+      //     return accumulator;
+      //   },
+      //   []
+      // );
       requiredResponse = finalList;
     }
     return requiredResponse;
@@ -219,9 +254,9 @@ export const getAllPizzas = async () => {
   try {
     const querySnapshot = await getDocs(collection(db, 'pizzas'));
     //Should set type to CountryObject, but for now the doc.data() interferes by adding DocumentData propery, IDK how to avoid it atm
-    let countryList: any[] = [];
+    let countryList: CountryObject[] = [];
     querySnapshot.forEach((doc) => {
-      const countryItem = doc.data();
+      const countryItem = doc.data() as CountryObject;
       countryList.push(countryItem);
     });
     return countryList;
