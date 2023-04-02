@@ -77,18 +77,18 @@ export default function Pizza() {
         <PizzaCard
           countryInfo={resultCountryObject.info}
           brandInfo={brandObject.info}
-          pizzaItem={brandObject.pizzaList[pizzaCredentials.name]}
-        />
-      )}
-      {user && pizzaCredentials ? (
-        <UploadImage
-          country={pizzaCredentials.country}
-          brand={pizzaCredentials.brand}
-          name={pizzaCredentials.name}
-          statusUpdate={updateStatus}
-        />
-      ) : (
-        <h4>To upload your own image,REGISTER or SIGN IN</h4>
+          pizzaItem={brandObject.pizzaList[pizzaCredentials.name]}>
+          {user && pizzaCredentials ? (
+            <UploadImage
+              country={pizzaCredentials.country}
+              brand={pizzaCredentials.brand}
+              name={pizzaCredentials.name}
+              statusUpdate={updateStatus}
+            />
+          ) : (
+            <h4>To upload your own image,REGISTER or SIGN IN</h4>
+          )}
+        </PizzaCard>
       )}
     </Layout>
   );

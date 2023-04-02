@@ -18,7 +18,12 @@ import {
 } from '@mui/material';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import ImagePreview from './ImagePreview';
-import { addData, getAllPizzas, uploadHandler } from '../firebase/app';
+import {
+  addData,
+  getAllPizzas,
+  getDataOfSingleCountry,
+  uploadHandler,
+} from '../firebase/app';
 import { getAuth } from 'firebase/auth';
 import { useRouter } from 'next/router';
 
@@ -47,7 +52,7 @@ export default function AdditionForm() {
     reset,
     setError,
     handleSubmit,
-    formState: { errors, isSubmitSuccessful, isLoading, isSubmitting },
+    formState: { errors, isSubmitSuccessful, isSubmitting },
   } = useForm<FormInputs>({
     resolver: yupResolver(formValidationSchema),
     defaultValues: defaults,
@@ -58,21 +63,7 @@ export default function AdditionForm() {
 
   const [image, setImages] = React.useState<File | null>(null);
 
-  const [brandNames, setBrandNames] = React.useState<any>([]);
-
-  React.useEffect(() => {
-    const getBrands = async () => {
-      const brandslist = await getAllPizzas();
-      if (!brandslist) return;
-      const brandNameList = Object.keys(brandslist);
-      // const brands = brandslist.map(
-      //   (brandDataObject) => brandDataObject.brandInfo.name
-      // );
-      // setBrandNames(brandNameList);
-      console.log(brandNameList);
-    };
-    getBrands();
-  }, []);
+  const [brandNames, setBrandNames] = React.useState<string[]>([]);
 
   React.useEffect(() => {
     reset(defaults);
@@ -108,10 +99,10 @@ export default function AdditionForm() {
           pizzaCreator: userId,
           imageList: [imageObject],
         });
-        // if (pizzaAddResponse.status) {
-        //   router.push(`/pizzas/${brand}/${name}`);
-        //   console.log(pizzaAddResponse);
-        // }
+        if (pizzaAddResponse.status) {
+          router.push(`/pizzas/${country}/${brand}/${name}`);
+          // console.log(pizzaAddResponse);
+        }
       }
     } catch (error) {
       console.log(error);
@@ -135,6 +126,7 @@ export default function AdditionForm() {
             <CountrySelect
               label='Country'
               field={field}
+              listUpdate={setBrandNames}
               error={errors.hasOwnProperty('country')}
               errorText={errors.country?.message || ''}></CountrySelect>
           </FormControl>

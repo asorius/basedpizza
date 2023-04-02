@@ -29,6 +29,7 @@ export default function Home() {
   );
   const [searchInput, setSearchInput] = React.useState<{ [x: string]: string }>(
     {
+      country: '',
       brand: '',
       name: '',
     }
@@ -39,19 +40,29 @@ export default function Home() {
     const getAllData = async () => {
       const countriesList = await getAllPizzas();
       if (!countriesList) return;
-      // setBrandsDB(countriesList.map((country:CountryObject)=>country.brandsList));
+      const brandsList = countriesList.reduce(
+        (accumulator, country: CountryObject) => {
+          const brands = Object.keys(country.brandsList);
+          brands.forEach((key: string) => accumulator.add(key));
+          return accumulator;
+        },
+        new Set()
+      );
+      // setBrandsDB(
+      //   countriesList.map((country: CountryObject) => country.brandsList)
+      // );
+      console.log(brandsList);
       setCountries(countriesList);
       setCountriesOriginal(countriesList);
     };
     getAllData();
-
     const q = query(collection(db, 'pizzas'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const updated: any = [];
       snapshot.forEach((doc) => updated.push(doc.data()));
       //on addition/modification updates lists
-      setBrandsDB(updated);
-      setBrands(updated);
+      setCountriesOriginal(updated);
+      setCountries(updated);
     });
     return () => {
       unsubscribe();
@@ -65,50 +76,57 @@ export default function Home() {
       setSearchInput((old) => ({ ...old, [key]: val }));
     }
   };
-  // React.useEffect(() => {
-  //   const brandInputValue = searchInput.brand;
-  //   const nameInputValue = searchInput.name;
+  React.useEffect(() => {
+    const brandInputValue = searchInput.brand;
+    const countryInputValue = searchInput.country;
+    const nameInputValue = searchInput.name;
 
-  //   //Check for value of ALL option, which would be an empty string
-  //   if (!brandInputValue.length) {
-  //     //Reset list of all brands to original
-  //     setBrands(brandsDB);
-  //     //Reset search results
-  //     setSearchResult(null);
-  //     return;
-  //   }
-  //   const foundBrandOriginal = brandsDB[brandInputValue];
-  //   //Check if new brand has been selected
-  //   if (searchResult && brandInputValue !== searchResult?.info.name) {
-  //     setSearchInput((previous) => ({ ...previous, name: '' }));
-  //   }
+    if (!countryInputValue.length) {
+      setBrands(null);
+      setSearchResult(null);
+      return;
+    }
 
-  //   //If specific pizza is selected by name
-  //   if (searchResult && foundBrandOriginal) {
-  //     //Check for value of ALL option, which would be an empty string
-  //     if (!nameInputValue.length) {
-  //       //Replace brand object(with filtered list) with original unchanged brand object
-  //       setBrands(foundBrandOriginal);
-  //       //Replace search object(with filtered list) with original unchanged brand object
-  //       setSearchResult(foundBrandOriginal);
-  //       return;
-  //     }
-  //     const requiredPizza = foundBrandOriginal.pizzaList[nameInputValue];
-  //     const newResult = { ...searchResult, pizzaList: requiredPizza };
-  //     // const listWithRequiredPizza = foundBrandOriginal.pizzaList.filter(
-  //     //   (pizza: PizzaObject) => pizza.name === nameInputValue
-  //     // );
-  //     // const newResult = { ...searchResult, pizzaList: listWithRequiredPizza };
-  //     //Update brands pizza list for display with that single pizza in the list
+    //Check for value of ALL option, which would be an empty string
+    if (!brandInputValue.length) {
+      //Reset list of all brands to original
+      setBrands(brandsDB);
+      //Reset search results
+      setSearchResult(null);
+      return;
+    }
+    // const foundBrandOriginal = brandsDB[brandInputValue];
+    // //Check if new brand has been selected
+    // if (searchResult && brandInputValue !== searchResult?.info.name) {
+    //   setSearchInput((previous) => ({ ...previous, name: '' }));
+    // }
 
-  //     setBrands(newResult);
-  //     return;
-  //   }
-  //   //Put brand as main result to form a list for pizza names
-  //   foundBrandOriginal && setSearchResult(foundBrandOriginal);
-  //   //Leave only the requested brand in the list to show filtered list
-  //   foundBrandOriginal && setBrands(foundBrandOriginal);
-  // }, [searchInput]);
+    // //If specific pizza is selected by name
+    // if (searchResult && foundBrandOriginal) {
+    //   //Check for value of ALL option, which would be an empty string
+    //   if (!nameInputValue.length) {
+    //     //Replace brand object(with filtered list) with original unchanged brand object
+    //     setBrands(foundBrandOriginal);
+    //     //Replace search object(with filtered list) with original unchanged brand object
+    //     setSearchResult(foundBrandOriginal);
+    //     return;
+    //   }
+    //   const requiredPizza = foundBrandOriginal.pizzaList[nameInputValue];
+    //   const newResult = { ...searchResult, pizzaList: requiredPizza };
+    //   // const listWithRequiredPizza = foundBrandOriginal.pizzaList.filter(
+    //   //   (pizza: PizzaObject) => pizza.name === nameInputValue
+    //   // );
+    //   // const newResult = { ...searchResult, pizzaList: listWithRequiredPizza };
+    //   //Update brands pizza list for display with that single pizza in the list
+
+    //   setBrands(newResult);
+    //   return;
+    // }
+    // //Put brand as main result to form a list for pizza names
+    // foundBrandOriginal && setSearchResult(foundBrandOriginal);
+    // //Leave only the requested brand in the list to show filtered list
+    // foundBrandOriginal && setBrands(foundBrandOriginal);
+  }, [searchInput]);
 
   return (
     <Layout>
@@ -121,30 +139,21 @@ export default function Home() {
           Can't find what you wanted? Register or sign to create a new Pizza.{' '}
         </h2>
       )}
-      {countries ? (
+      {countries?.length ? (
         <>
-          <Main countryObjects={countries}></Main>
-        </>
-      ) : (
-        <div>no</div>
-      )}
-      {/* {brands.length <= 0 ? (
-        <div>No pizzas in the Pizzabase yet.</div>
-      ) : (
-        <>
-          <Search
+          {/* <Search
             onChangeController={inputController}
             brandValue={searchInput.brand}
             nameValue={searchInput.name}
+            countryValue={searchInput.country}
             brandList={brands}
             selectedBrand={searchResult}
-          />
-
-          <Suspense fallback={<Loading />}>
-            <Main brandObjects={brands} />
-          </Suspense>
+          /> */}
+          <Main countryObjects={countries}></Main>
         </>
-      )} */}
+      ) : (
+        <div>No pizzas in the Pizzabase yet.</div>
+      )}
     </Layout>
   );
 }

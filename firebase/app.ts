@@ -40,7 +40,9 @@ if (getApps().length) {
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 
-export const addData = async (pizzaData: PizzaFormInput) => {
+export const addData = async (
+  pizzaData: PizzaFormInput
+): Promise<{ status: boolean }> => {
   try {
     const { brandName, countryName } = pizzaData;
     const dbRef = doc(db, 'pizzas', countryName);
@@ -88,6 +90,7 @@ export const addData = async (pizzaData: PizzaFormInput) => {
       // } catch (e) {
       //   throw new Error('Brand couldnt be updated with new pizza');
       // }
+      return { status: true };
     } else {
       //Add new document *countryName* collection
       await setDoc(dbRef, countryItem, {
@@ -236,6 +239,7 @@ export const getDataOfSingleBrand = async (
   }
 };
 export const getDataOfSingleCountry = async (country: string) => {
+  console.log(country);
   if (!country) return;
   try {
     console.log('getting data...');

@@ -4,12 +4,14 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import FormHelperText from '@mui/material/FormHelperText';
 import { capitalized } from 'lib/utils';
+import { getDataOfSingleCountry } from '../../firebase/app';
 
 export default function CountrySelect(props: {
   label: string;
-  field: any;
-  error: boolean;
-  errorText: string;
+  field?: any;
+  error?: boolean;
+  errorText?: string;
+  listUpdate?: (list: string[]) => void;
 }) {
   return (
     <Autocomplete
@@ -17,7 +19,7 @@ export default function CountrySelect(props: {
       sx={{ width: 300 }}
       options={countries}
       autoHighlight
-      onChange={(e) => {
+      onChange={async (e) => {
         // Get index on according value from Material ui attribute
         const idx = e.currentTarget.getAttribute('data-option-index');
         if (idx) {
@@ -25,6 +27,21 @@ export default function CountrySelect(props: {
           const idxInt = parseInt(idx);
           //Macth idx to value
           const value = countries[idxInt].label;
+          //If a function to update brands list is provided
+          if (props.listUpdate) {
+            //Find the required country
+            const selectedCountry = await getDataOfSingleCountry(value);
+
+            if (selectedCountry) {
+              //If there are brands already existing in selected country object create array of brand names
+              const list =
+                selectedCountry && Object.keys(selectedCountry.brandsList);
+              list && props.listUpdate(list);
+            } else {
+              //If no country was found, reset the list
+              props.listUpdate([]);
+            }
+          }
           //Pass the value to react-hook-form controller
           props.field.onChange(value);
         }
@@ -71,7 +88,7 @@ interface CountryType {
 }
 
 // From https://bitbucket.org/atlassian/atlaskit-mk-2/raw/4ad0e56649c3e6c973e226b7efaeb28cb240ccb0/packages/core/select/src/data/countries.js
-const countries: readonly CountryType[] = [
+export const countries: readonly CountryType[] = [
   { code: 'AD', label: 'Andorra', phone: '376' },
   {
     code: 'AE',

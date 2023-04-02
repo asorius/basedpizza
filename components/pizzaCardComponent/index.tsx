@@ -23,6 +23,7 @@ interface Props {
   pizzaItem: PizzaObject;
   link?: any;
   user?: any;
+  children?: React.ReactNode;
 }
 export default function PizzaCard({
   countryInfo,
@@ -30,6 +31,7 @@ export default function PizzaCard({
   pizzaItem,
   link,
   user,
+  children,
 }: Props) {
   const [imageUrls, setImages] = React.useState<string[]>([]);
   React.useEffect(() => {
@@ -79,6 +81,7 @@ export default function PizzaCard({
           </CardActions>
         )}
       </CardContent>
+      {children}
     </Card>
   );
 }

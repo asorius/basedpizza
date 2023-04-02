@@ -4,9 +4,11 @@ import { Button, FormControl, InputLabel } from '@mui/material';
 import { BrandObject, PizzaObject } from '../../lib/types';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import CountrySelect from './CountrySelect';
 interface Props {
   brandValue: string;
   nameValue: string;
+  countryValue: string;
   brandList: BrandObject[];
   selectedBrand: BrandObject | null;
   onChangeController: any;
@@ -14,6 +16,7 @@ interface Props {
 export default function Search({
   brandValue,
   nameValue,
+  countryValue,
   brandList,
   selectedBrand,
   onChangeController,
@@ -23,7 +26,7 @@ export default function Search({
 
   React.useEffect(() => {
     const listOfBrandNames = brandList.map(
-      (brandDataObject) => brandDataObject.brandInfo.brandName
+      (brandDataObject) => brandDataObject.info.name
     );
     setBrandNames(listOfBrandNames);
   }, []);
@@ -31,7 +34,7 @@ export default function Search({
   React.useEffect(() => {
     if (selectedBrand) {
       const pizzaNameList = selectedBrand.pizzaList.map(
-        (pizzaItem: PizzaObject) => pizzaItem.pizzaName
+        (pizzaItem: PizzaObject) => pizzaItem.name
       );
       setPizzaNames(pizzaNameList);
     } else {
@@ -41,6 +44,7 @@ export default function Search({
 
   return (
     <>
+      <CountrySelect label='mananan' />
       <FormControl sx={{ m: 1, minWidth: 120 }} size='small'>
         <InputLabel id='select-brand'>Brand</InputLabel>
         <Select
