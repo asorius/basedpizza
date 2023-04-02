@@ -55,12 +55,6 @@ export const addData = async (
     };
 
     const pizzaList = { [pizzaData.pizzaName]: pizzaItem };
-    // const pizzaItem ={
-    //   name: pizzaData.pizzaName,
-    //   price: pizzaData.price,
-    //   creator: pizzaData.pizzaCreator,
-    //   imageList: pizzaData.imageList,
-    // };
 
     const brandData: BrandData = { name: brandName };
     const countryData: CountryData = { name: countryName };
@@ -74,23 +68,28 @@ export const addData = async (
       info: countryData,
       brandsList: { [brandName]: brandItem },
     };
-    //Check if brand collection has already been created
-    const alreadyInDB = false;
-    // const alreadyInDB = await getDataOfSingleBrand(brandName, countryName);
-
+    //Check for country
+    const alreadyInDB = await getDataOfSingleCountry(countryName);
     if (alreadyInDB) {
-      // try {
-      //   //New list with new pizza item added
-      //   const newList = [pizzaItem, ...alreadyInDB.pizzaList];
-      //   //update brands collection
-      //   await updateDoc(dbRef, {
-      //     pizzaList: newList,
-      //   });
-      //   return { status: true };
-      // } catch (e) {
-      //   throw new Error('Brand couldnt be updated with new pizza');
-      // }
-      return { status: true };
+      try {
+        //New list with new pizza item added
+        const newList = {
+          ...alreadyInDB.brandsList[brandName].pizzaList,
+          [pizzaData.pizzaName]: pizzaItem,
+        };
+        console.log('updating pizzaa.....');
+        const updatedBrand = { ...brandItem, pizzaList: newList };
+
+        //update brands collection
+        await updateDoc(dbRef, {
+          brandsList: {
+            [brandName]: updatedBrand,
+          },
+        });
+        return { status: true };
+      } catch (e) {
+        throw new Error('Brand couldnt be updated with new pizza');
+      }
     } else {
       //Add new document *countryName* collection
       await setDoc(dbRef, countryItem, {
@@ -143,41 +142,37 @@ export const updatePizza = async (
 ) => {
   try {
     // console.log({ brandName, pizzaName });
-    const countryDocumenetRef = doc(db, 'pizzas', countryName);
+    const countryRef = doc(db, 'pizzas', countryName);
     //Get required brand with all  pizzas to loop over
-    const brandObject: BrandObject = await getDataOfSingleBrand(
-      brandName,
-      countryName
-    );
-    if (brandObject && newImage) {
-      console.log(brandObject);
-      // Iterate through all pizzas in that brand, add image to the pizza with matching name
-      const newList = brandObject.pizzaList.map((pizza: PizzaObject) => {
-        //If pizza names match and there isn't already that image in there, push it
-        if (pizza.name === pizzaName && !pizza.imageList.includes(newImage)) {
-          pizza.imageList.push(newImage);
-        }
-        return pizza;
-      });
-      //Iterate through all pizzas in that brand, add image to the pizza with matching name
-      // const newList = countryObject.brandsList.map((brand: BrandObject) => {
-      //   //If pizza names match and there isn't already that image in there, push it
-      //   if (pizza.name === pizzaName && !pizza.imageList.includes(newImage)) {
-      //     pizza.imageList.push(newImage);
-      //   }
-      //   return pizza;
-      // });
-      // Update brands collection with the new list
-      // await db.collection('pizzas').doc(countryName).update(
-      //   {
+    // const brandObject: BrandObject = await getDataOfSingleBrand(
+    //   brandName,
+    //   countryName
+    // );
+    // console.log(brandObject);
+    const pizzaCountry = await getDataOfSingleCountry(countryName);
 
-      // }});
-      await updateDoc(countryDocumenetRef, {
-        'brandsList[0].pizzaList': newList,
+    if (countryRef && pizzaCountry && newImage) {
+      const parentBrand = pizzaCountry.brandsList[brandName];
+      // Iterate through all pizzas in that brand, add image to the pizza with matching name
+      const oldpizza = parentBrand.pizzaList[pizzaName];
+      const oldImageList = parentBrand.pizzaList[pizzaName].imageList;
+      const newImageList = [...oldImageList, newImage];
+
+      const updatedList = {
+        ...pizzaCountry.brandsList[brandName].pizzaList,
+        [pizzaName]: { ...oldpizza, imageList: newImageList },
+      };
+      const updatedBrand = {
+        ...pizzaCountry.brandsList[brandName],
+        pizzaList: updatedList,
+      };
+
+      //update brands
+      await updateDoc(countryRef, {
+        brandsList: {
+          [brandName]: updatedBrand,
+        },
       });
-      // await updateDoc(docRef, {
-      //   pizzaList: newList,
-      // });
     }
   } catch (e) {
     console.log(e);
@@ -190,7 +185,6 @@ export const getDataOfSingleBrand = async (
 ) => {
   if (!brand) return;
   try {
-    console.log('getting data...');
     const allCountries = await getAllPizzas();
     if (!allCountries) {
       console.log('coudlnt get all countries');
@@ -210,7 +204,7 @@ export const getDataOfSingleBrand = async (
       const finalList = allCountries.filter((countryElement: CountryObject) => {
         const countryBrandNames = Object.keys(countryElement.brandsList);
         if (countryBrandNames.includes(brand)) {
-          countryElement;
+          return countryElement;
         }
       });
       // const finalList = allCountries.reduce(
@@ -225,6 +219,8 @@ export const getDataOfSingleBrand = async (
       // );
       requiredResponse = finalList;
     }
+    console.log('from filter getsignlebrand');
+    console.log(requiredResponse);
     return requiredResponse;
     //Return specific brand from all countries
     // const docRef = doc(db, 'pizzas', country);

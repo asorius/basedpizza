@@ -19,14 +19,10 @@ export default function CountrySelect(props: {
       sx={{ width: 300 }}
       options={countries}
       autoHighlight
-      onChange={async (e) => {
-        // Get index on according value from Material ui attribute
-        const idx = e.currentTarget.getAttribute('data-option-index');
-        if (idx) {
-          //idx comes as string, convert to number
-          const idxInt = parseInt(idx);
-          //Macth idx to value
-          const value = countries[idxInt].label;
+      onInputChange={async (e) => {
+        const countryNameAndCode = e.currentTarget.textContent;
+        if (countryNameAndCode) {
+          const value = countryNameAndCode;
           //If a function to update brands list is provided
           if (props.listUpdate) {
             //Find the required country
@@ -46,7 +42,7 @@ export default function CountrySelect(props: {
           props.field.onChange(value);
         }
       }}
-      getOptionLabel={(option) => option.label}
+      getOptionLabel={(option: CountryType) => option.label}
       renderOption={(props, option) => (
         <Box
           component='li'
@@ -59,7 +55,7 @@ export default function CountrySelect(props: {
             srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
             alt=''
           />
-          {option.label} ({option.code})
+          {option.label}
         </Box>
       )}
       renderInput={(params) => (
