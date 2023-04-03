@@ -5,6 +5,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import FormHelperText from '@mui/material/FormHelperText';
 import { capitalized } from 'lib/utils';
 import { getDataOfSingleCountry } from '../../firebase/app';
+import { CountryObject } from 'lib/types';
 
 export default function CountrySelect(props: {
   label: string;
@@ -12,17 +13,31 @@ export default function CountrySelect(props: {
   error?: boolean;
   errorText?: string;
   listUpdate?: (list: string[]) => void;
+  updateValue?: (K: string) => void;
+  customCountriesList?: string[] | null;
 }) {
   return (
     <Autocomplete
       id='country-select-demo'
       sx={{ width: 300 }}
-      options={countries}
+      options={
+        props.customCountriesList
+          ? countries.filter(
+              (country: CountryType) =>
+                props.customCountriesList &&
+                props.customCountriesList.includes(country.label)
+            )
+          : countries
+      }
       autoHighlight
       onInputChange={async (e) => {
         const countryNameAndCode = e.currentTarget.textContent;
         if (countryNameAndCode) {
           const value = countryNameAndCode;
+          if (props.updateValue) {
+            props.updateValue(value);
+            return;
+          }
           //If a function to update brands list is provided
           if (props.listUpdate) {
             //Find the required country
@@ -38,8 +53,12 @@ export default function CountrySelect(props: {
               props.listUpdate([]);
             }
           }
-          //Pass the value to react-hook-form controller
-          props.field.onChange(value);
+          if (props.field) {
+            //Pass the value to react-hook-form controller
+            props.field.onChange(value);
+          }
+        } else {
+          props.updateValue && props.updateValue('');
         }
       }}
       getOptionLabel={(option: CountryType) => option.label}

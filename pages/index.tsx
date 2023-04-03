@@ -9,22 +9,32 @@ import Link from 'next/link';
 import { getAuth } from 'firebase/auth';
 import Search from '../components/searchComponent';
 import { getAllPizzas, db } from '../firebase/app';
-import { BrandObject, CountryObject, PizzaObject } from 'lib/types';
+import { BrandObject, BrandsList, CountryObject, PizzaObject } from 'lib/types';
 import Loading from 'lib/Loading';
 import { lazy } from 'react';
 import { collection, doc, onSnapshot, query } from 'firebase/firestore';
+const getBrands = (countries: CountryObject[]) => {
+  const list = countries.reduce(
+    (accumulator: Set<string>, country: CountryObject) => {
+      const brands = Object.keys(country.brandsList);
+      brands.forEach((key: string) => accumulator.add(key));
+      return accumulator;
+    },
+    new Set()
+  );
 
+  const arrayed = Array.from(list);
+  return arrayed;
+};
 const Main = lazy(() => import('../components/mainComponent'));
 export default function Home() {
-  const [brands, setBrands] = React.useState<BrandObject | null>(null);
-  const [brandsDB, setBrandsDB] = React.useState<BrandObject | null>(null);
-  const [countries, setCountries] = React.useState<CountryObject[] | null>(
-    null
-  );
+  const [displayCountries, setDisplayCountries] = React.useState<
+    CountryObject[] | null
+  >(null);
   const [countriesOriginal, setCountriesOriginal] = React.useState<
     CountryObject[]
   >([]);
-  const [searchResult, setSearchResult] = React.useState<BrandObject | null>(
+  const [searchResult, setSearchResult] = React.useState<CountryObject | null>(
     null
   );
   const [searchInput, setSearchInput] = React.useState<{ [x: string]: string }>(
@@ -34,6 +44,13 @@ export default function Home() {
       name: '',
     }
   );
+  const [displayBrand, setDisplayBrand] = React.useState<BrandObject | null>(
+    null
+  );
+  const [brandNamesOG, setBrandNames] = React.useState<string[] | null>(null);
+  const [brandSearchNames, setBrandSearchNames] = React.useState<
+    string[] | null
+  >(null);
   const auth = getAuth();
   const user = auth.currentUser;
   React.useEffect(() => {
@@ -41,18 +58,18 @@ export default function Home() {
       const countriesList = await getAllPizzas();
       if (!countriesList) return;
       const brandsList = countriesList.reduce(
-        (accumulator, country: CountryObject) => {
+        (accumulator: Set<string>, country: CountryObject) => {
           const brands = Object.keys(country.brandsList);
           brands.forEach((key: string) => accumulator.add(key));
           return accumulator;
         },
         new Set()
       );
-      // setBrandsDB(
-      //   countriesList.map((country: CountryObject) => country.brandsList)
-      // );
-      console.log(brandsList);
-      setCountries(countriesList);
+
+      const arrayed = Array.from(brandsList);
+      setBrandNames(arrayed);
+      setBrandSearchNames(arrayed);
+      setDisplayCountries(countriesList);
       setCountriesOriginal(countriesList);
     };
     getAllData();
@@ -62,7 +79,7 @@ export default function Home() {
       snapshot.forEach((doc) => updated.push(doc.data()));
       //on addition/modification updates lists
       setCountriesOriginal(updated);
-      setCountries(updated);
+      setDisplayCountries(updated);
     });
     return () => {
       unsubscribe();
@@ -77,28 +94,72 @@ export default function Home() {
     }
   };
   React.useEffect(() => {
-    const brandInputValue = searchInput.brand;
     const countryInputValue = searchInput.country;
+    const brandInputValue = searchInput.brand;
     const nameInputValue = searchInput.name;
 
-    if (!countryInputValue.length) {
-      setBrands(null);
-      setSearchResult(null);
-      return;
-    }
+    // if (!countryInputValue.length) {
+    //   //If user hasn't selected a specific country, reset
+    //   setSearchResult(null);
+    //   return;
+    // }
 
     //Check for value of ALL option, which would be an empty string
-    if (!brandInputValue.length) {
-      //Reset list of all brands to original
-      setBrands(brandsDB);
-      //Reset search results
-      setSearchResult(null);
+    // if (!brandInputValue.length) {
+    //   //Reset list of all brands to original
+    //   setBrands(brandsDB);
+    //   //Reset search results
+    //   setSearchResult(null);
+    //   return;
+    // }
+    // const foundBrandOriginal = brandsDB[brandInputValue];
+    if (!displayCountries) {
       return;
     }
-    // const foundBrandOriginal = brandsDB[brandInputValue];
-    // //Check if new brand has been selected
-    // if (searchResult && brandInputValue !== searchResult?.info.name) {
-    //   setSearchInput((previous) => ({ ...previous, name: '' }));
+    if (countryInputValue.length === 0) {
+      setDisplayCountries(countriesOriginal);
+    }
+    if (countryInputValue.length > 0) {
+      // if there are any countries to display at all and countries input is NOT set to ALL
+      const foundCountry = countriesOriginal.find(
+        (country: CountryObject) =>
+          country.info.name.toLocaleLowerCase() ===
+          countryInputValue.toLocaleLowerCase()
+      );
+      if (foundCountry) {
+        setDisplayCountries([foundCountry]);
+        setBrandSearchNames(Object.keys(foundCountry.brandsList));
+      }
+      if (brandInputValue.length > 0 && foundCountry) {
+        const selectedBrand = foundCountry.brandsList[brandInputValue];
+        setDisplayBrand(selectedBrand);
+      }
+      if (
+        nameInputValue.length > 0 &&
+        brandInputValue.length > 0 &&
+        foundCountry
+      ) {
+        // const selectedBrand = foundCountry.brandsList[brandInputValue];
+        // setDisplayBrand(selectedBrand);
+      }
+      return;
+    }
+    if (brandInputValue.length > 0) {
+      //loop through countries and leave the ones that have that brand
+      const filtered = displayCountries.filter((country: CountryObject) =>
+        country.brandsList.hasOwnProperty(brandInputValue)
+      );
+      console.log(filtered);
+      setDisplayCountries(filtered);
+    }
+    // // Check if new brand has been selected
+    // if (
+    //   brandInputValue.length > 0 &&
+    //   countryInputValue.length > 0 &&
+    //   displayCountries
+    // ) {
+    //   const newBrands = getBrands(displayCountries);
+    //   setBrandSearchNames(newBrands);
     // }
 
     // //If specific pizza is selected by name
@@ -139,17 +200,17 @@ export default function Home() {
           Can't find what you wanted? Register or sign to create a new Pizza.{' '}
         </h2>
       )}
-      {countries?.length ? (
+      {displayCountries?.length ? (
         <>
-          {/* <Search
+          <Search
             onChangeController={inputController}
             brandValue={searchInput.brand}
             nameValue={searchInput.name}
-            countryValue={searchInput.country}
-            brandList={brands}
-            selectedBrand={searchResult}
-          /> */}
-          <Main countryObjects={countries}></Main>
+            selectedCountries={displayCountries}
+            brandsList={brandSearchNames}
+            selectedBrand={displayBrand}
+          />
+          <Main countryObjects={displayCountries}></Main>
         </>
       ) : (
         <div>No pizzas in the Pizzabase yet.</div>

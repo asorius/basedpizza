@@ -1,50 +1,71 @@
 import React from 'react';
 import { Button, FormControl, InputLabel } from '@mui/material';
 
-import { BrandObject, PizzaObject } from '../../lib/types';
+import { BrandObject, CountryObject, PizzaObject } from '../../lib/types';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import CountrySelect from './CountrySelect';
 interface Props {
   brandValue: string;
   nameValue: string;
-  countryValue: string;
-  brandList: BrandObject[];
-  selectedBrand: BrandObject | null;
+  selectedCountries: CountryObject[];
+  brandsList?: string[] | null;
+  selectedBrand?: BrandObject | null;
   onChangeController: any;
 }
 export default function Search({
   brandValue,
   nameValue,
-  countryValue,
-  brandList,
+  selectedCountries,
   selectedBrand,
+  brandsList,
   onChangeController,
 }: Props) {
   const [brandNames, setBrandNames] = React.useState<string[]>([]);
   const [pizzaNames, setPizzaNames] = React.useState<string[]>([]);
-
+  const [customCountries, setCustomCountries] = React.useState<string[] | null>(
+    null
+  );
   React.useEffect(() => {
-    const listOfBrandNames = brandList.map(
-      (brandDataObject) => brandDataObject.info.name
+    // const brandsInSelectedCountry = selectedCountries.reduce(
+    //   (accumulator: Set<string>, country: CountryObject) => {
+    //     const brands = Object.keys(country.brandsList);
+    //     brands.forEach((key: string) => accumulator.add(key));
+    //     return accumulator;
+    //   },
+    //   new Set()
+    // );
+
+    // const listOfBrandNames = Array.from(brandsInSelectedCountry);
+    const countriesList = selectedCountries.map(
+      (country: CountryObject) => country.info.name
     );
-    setBrandNames(listOfBrandNames);
-  }, []);
+    setCustomCountries(countriesList);
+    brandsList && setBrandNames(brandsList);
+  }, [brandsList]);
 
   React.useEffect(() => {
     if (selectedBrand) {
-      const pizzaNameList = selectedBrand.pizzaList.map(
-        (pizzaItem: PizzaObject) => pizzaItem.name
-      );
+      const pizzaNameList = Object.keys(selectedBrand.pizzaList);
+      // const pizzaNameList = selectedBrand.pizzaList.map(
+      //   (pizzaItem: PizzaObject) => pizzaItem.name
+      // );
       setPizzaNames(pizzaNameList);
     } else {
       setPizzaNames([]);
     }
-  }, [brandValue, selectedBrand]);
+  }, [selectedBrand]);
 
   return (
     <>
-      <CountrySelect label='mananan' />
+      <CountrySelect
+        label='Select country'
+        customCountriesList={customCountries}
+        listUpdate={setBrandNames}
+        updateValue={(value: string) =>
+          onChangeController({ target: { name: 'country', value } })
+        }
+      />
       <FormControl sx={{ m: 1, minWidth: 120 }} size='small'>
         <InputLabel id='select-brand'>Brand</InputLabel>
         <Select
