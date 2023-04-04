@@ -13,19 +13,7 @@ import { BrandObject, BrandsList, CountryObject, PizzaObject } from 'lib/types';
 import Loading from 'lib/Loading';
 import { lazy } from 'react';
 import { collection, doc, onSnapshot, query } from 'firebase/firestore';
-const getBrands = (countries: CountryObject[]) => {
-  const list = countries.reduce(
-    (accumulator: Set<string>, country: CountryObject) => {
-      const brands = Object.keys(country.brandsList);
-      brands.forEach((key: string) => accumulator.add(key));
-      return accumulator;
-    },
-    new Set()
-  );
 
-  const arrayed = Array.from(list);
-  return arrayed;
-};
 const Main = lazy(() => import('../components/mainComponent'));
 export default function Home() {
   const [displayCountries, setDisplayCountries] = React.useState<
@@ -34,9 +22,6 @@ export default function Home() {
   const [countriesOriginal, setCountriesOriginal] = React.useState<
     CountryObject[]
   >([]);
-  const [searchResult, setSearchResult] = React.useState<CountryObject | null>(
-    null
-  );
   const [searchInput, setSearchInput] = React.useState<{ [x: string]: string }>(
     {
       country: '',
@@ -98,95 +83,54 @@ export default function Home() {
     const brandInputValue = searchInput.brand;
     const nameInputValue = searchInput.name;
 
-    // if (!countryInputValue.length) {
-    //   //If user hasn't selected a specific country, reset
-    //   setSearchResult(null);
-    //   return;
-    // }
-
-    //Check for value of ALL option, which would be an empty string
-    // if (!brandInputValue.length) {
-    //   //Reset list of all brands to original
-    //   setBrands(brandsDB);
-    //   //Reset search results
-    //   setSearchResult(null);
-    //   return;
-    // }
-    // const foundBrandOriginal = brandsDB[brandInputValue];
     if (!displayCountries) {
       return;
     }
-    if (countryInputValue.length === 0) {
-      setDisplayCountries(countriesOriginal);
-    }
-    if (countryInputValue.length > 0) {
+    if (brandInputValue.length > 0 && countryInputValue.length > 0) {
+      const filtered = countriesOriginal.filter((country: CountryObject) =>
+        country.brandsList.hasOwnProperty(brandInputValue)
+      );
+      const foundCountry = filtered.find(
+        (country: CountryObject) =>
+          country.info.name.toLowerCase() === countryInputValue.toLowerCase()
+      );
+      if (foundCountry) {
+        setBrandSearchNames(Object.keys(foundCountry.brandsList));
+        if (filtered.length === 1) {
+          const selectedBrand = filtered[0].brandsList[brandInputValue];
+          setDisplayBrand(selectedBrand);
+        }
+        setDisplayCountries([foundCountry]);
+        return;
+      }
+      setDisplayCountries(filtered);
+      return;
+    } else if (brandInputValue.length > 0) {
+      //loop through countries and leave the ones that have that brand
+      const filtered = countriesOriginal.filter((country: CountryObject) =>
+        country.brandsList.hasOwnProperty(brandInputValue)
+      );
+      if (filtered.length === 1) {
+        const selectedBrand = filtered[0].brandsList[brandInputValue];
+        setDisplayBrand(selectedBrand);
+      }
+      setDisplayCountries(filtered);
+      return;
+    } else if (countryInputValue.length > 0) {
       // if there are any countries to display at all and countries input is NOT set to ALL
       const foundCountry = countriesOriginal.find(
         (country: CountryObject) =>
-          country.info.name.toLocaleLowerCase() ===
-          countryInputValue.toLocaleLowerCase()
+          country.info.name.toLowerCase() === countryInputValue.toLowerCase()
       );
       if (foundCountry) {
         setDisplayCountries([foundCountry]);
         setBrandSearchNames(Object.keys(foundCountry.brandsList));
       }
-      if (brandInputValue.length > 0 && foundCountry) {
-        const selectedBrand = foundCountry.brandsList[brandInputValue];
-        setDisplayBrand(selectedBrand);
-      }
-      if (
-        nameInputValue.length > 0 &&
-        brandInputValue.length > 0 &&
-        foundCountry
-      ) {
-        // const selectedBrand = foundCountry.brandsList[brandInputValue];
-        // setDisplayBrand(selectedBrand);
-      }
-      return;
+    } else {
+      setDisplayCountries(countriesOriginal);
+      setDisplayBrand(null);
+      setBrandSearchNames(brandNamesOG);
     }
-    if (brandInputValue.length > 0) {
-      //loop through countries and leave the ones that have that brand
-      const filtered = displayCountries.filter((country: CountryObject) =>
-        country.brandsList.hasOwnProperty(brandInputValue)
-      );
-      console.log(filtered);
-      setDisplayCountries(filtered);
-    }
-    // // Check if new brand has been selected
-    // if (
-    //   brandInputValue.length > 0 &&
-    //   countryInputValue.length > 0 &&
-    //   displayCountries
-    // ) {
-    //   const newBrands = getBrands(displayCountries);
-    //   setBrandSearchNames(newBrands);
-    // }
-
-    // //If specific pizza is selected by name
-    // if (searchResult && foundBrandOriginal) {
-    //   //Check for value of ALL option, which would be an empty string
-    //   if (!nameInputValue.length) {
-    //     //Replace brand object(with filtered list) with original unchanged brand object
-    //     setBrands(foundBrandOriginal);
-    //     //Replace search object(with filtered list) with original unchanged brand object
-    //     setSearchResult(foundBrandOriginal);
-    //     return;
-    //   }
-    //   const requiredPizza = foundBrandOriginal.pizzaList[nameInputValue];
-    //   const newResult = { ...searchResult, pizzaList: requiredPizza };
-    //   // const listWithRequiredPizza = foundBrandOriginal.pizzaList.filter(
-    //   //   (pizza: PizzaObject) => pizza.name === nameInputValue
-    //   // );
-    //   // const newResult = { ...searchResult, pizzaList: listWithRequiredPizza };
-    //   //Update brands pizza list for display with that single pizza in the list
-
-    //   setBrands(newResult);
-    //   return;
-    // }
-    // //Put brand as main result to form a list for pizza names
-    // foundBrandOriginal && setSearchResult(foundBrandOriginal);
-    // //Leave only the requested brand in the list to show filtered list
-    // foundBrandOriginal && setBrands(foundBrandOriginal);
   }, [searchInput]);
 
   return (

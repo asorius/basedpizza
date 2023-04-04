@@ -27,22 +27,15 @@ export default function Search({
     null
   );
   React.useEffect(() => {
-    // const brandsInSelectedCountry = selectedCountries.reduce(
-    //   (accumulator: Set<string>, country: CountryObject) => {
-    //     const brands = Object.keys(country.brandsList);
-    //     brands.forEach((key: string) => accumulator.add(key));
-    //     return accumulator;
-    //   },
-    //   new Set()
-    // );
-
-    // const listOfBrandNames = Array.from(brandsInSelectedCountry);
+    brandsList && setBrandNames(brandsList);
+  }, [brandsList]);
+  React.useEffect(() => {
     const countriesList = selectedCountries.map(
       (country: CountryObject) => country.info.name
     );
+
     setCustomCountries(countriesList);
-    brandsList && setBrandNames(brandsList);
-  }, [brandsList]);
+  }, [selectedCountries]);
 
   React.useEffect(() => {
     if (selectedBrand) {
