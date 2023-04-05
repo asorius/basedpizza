@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import Image from 'next/image';
-import { storage } from '../../firebase/app';
+import { storage } from '../../firebase/application';
 import { ref, getDownloadURL } from 'firebase/storage';
 import {
   BrandData,

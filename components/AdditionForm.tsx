@@ -23,8 +23,9 @@ import {
   getAllPizzas,
   getDataOfSingleCountry,
   uploadHandler,
-} from '../firebase/app';
+} from '../firebase/application';
 import { getAuth } from 'firebase/auth';
+import { app } from '../firebase/application';
 import { useRouter } from 'next/router';
 
 import AutocompleteInput from '../lib/AutocompleteInput';
@@ -58,17 +59,20 @@ export default function AdditionForm() {
     defaultValues: defaults,
   });
   const router = useRouter();
-  const auth = getAuth();
+  const auth = getAuth(app);
   const user = auth.currentUser;
 
   const [image, setImages] = React.useState<File | null>(null);
+  const [responseStatus, setResponseStatus] = React.useState<boolean>(true);
 
   const [brandNames, setBrandNames] = React.useState<string[]>([]);
 
-  React.useEffect(() => {
-    reset(defaults);
-    setImages(null);
-  }, [isSubmitSuccessful, reset]);
+  // React.useEffect(() => {
+  //   if (isSubmitSuccessful) {
+  //     reset(defaults);
+  //     setImages(null);
+  //   }
+  // }, [isSubmitSuccessful, reset]);
   const deleteFunc = (e: any) => {
     setImages(null);
   };
@@ -99,9 +103,11 @@ export default function AdditionForm() {
           pizzaCreator: userId,
           imageList: [imageObject],
         });
+        console.log(pizzaAddResponse);
         if (pizzaAddResponse.status) {
           router.push(`/pizzas/${country}/${brand}/${name}`);
-          // console.log(pizzaAddResponse);
+        } else {
+          // setResponseStatus(false);
         }
       }
     } catch (error) {
@@ -111,9 +117,18 @@ export default function AdditionForm() {
   const errorHandler: SubmitErrorHandler<FormInputs> = (error) => {
     console.log(error);
   };
-  if (isSubmitting) {
-    return <h2>Submitting form...</h2>;
-  }
+  // if (isSubmitting) {
+  //   return <h2>Submitting form...</h2>;
+  // }
+
+  // if (!responseStatus) {
+  //   return (
+  //     <div>
+  //       <h2>Error!</h2>
+  //       <button onClick={() => router.reload()}>Try again</button>
+  //     </div>
+  //   );
+  // }
   return (
     <form
       onSubmit={handleSubmit(onSubmit, errorHandler)}

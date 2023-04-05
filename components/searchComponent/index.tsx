@@ -40,9 +40,7 @@ export default function Search({
   React.useEffect(() => {
     if (selectedBrand) {
       const pizzaNameList = Object.keys(selectedBrand.pizzaList);
-      // const pizzaNameList = selectedBrand.pizzaList.map(
-      //   (pizzaItem: PizzaObject) => pizzaItem.name
-      // );
+
       setPizzaNames(pizzaNameList);
     } else {
       setPizzaNames([]);

@@ -2,13 +2,14 @@ import React, { Suspense, lazy } from 'react';
 // import { AdditionForm } from '../../components/AdditionForm';
 import Layout from '../../components/Layout';
 import { getAuth } from 'firebase/auth';
-import { app, getAllPizzas } from '../../firebase/app';
+// import { app } from '../../firebase/application';
+import { app, getAllPizzas } from '../../firebase/application';
 import { BrandObject, PizzaObject } from 'lib/types';
 import Loading from '../../lib/Loading';
 import AuthRoute from 'components/AuthRoute';
 const Addition = lazy(() => import('../../components/AdditionForm'));
 export default function PizzaForm() {
-  const auth = getAuth();
+  const auth = getAuth(app);
   const user = auth.currentUser;
 
   return (

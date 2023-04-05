@@ -10,7 +10,7 @@ import {
 import { yupResolver } from '@hookform/resolvers/yup';
 import { capitalized } from '../lib/utils';
 import { Button, FormControl, TextField, FormHelperText } from '@mui/material';
-import { registerNewUser } from '../firebase/auth';
+import { registerNewUser } from '../firebase/authentication';
 import Loading from '../lib/Loading';
 
 interface IFormInputs {

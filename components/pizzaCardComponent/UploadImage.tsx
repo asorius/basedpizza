@@ -1,5 +1,5 @@
 import React from 'react';
-import { updatePizza } from '../../firebase/app';
+import { updatePizza } from '../../firebase/application';
 
 import { getAuth } from 'firebase/auth';
 
@@ -14,7 +14,7 @@ import Loading from '../../lib/Loading';
 import { Button, FormControl, FormHelperText } from '@mui/material';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import ImagePreview from '../ImagePreview';
-import { uploadHandler } from '../../firebase/app';
+import { uploadHandler } from '../../firebase/application';
 import { ImageObject } from 'lib/types';
 interface FormInputs {
   image: File | null;

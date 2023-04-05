@@ -1,5 +1,5 @@
 import React from 'react';
-import { getDataOfSinglePizza, updatePizza } from '../../firebase/app';
+import { getDataOfSinglePizza, updatePizza } from '../../firebase/application';
 import { useRouter } from 'next/router';
 import PizzaCard from '../../components/pizzaCardComponent';
 import AuthRoute from '../../components/AuthRoute';
@@ -30,7 +30,7 @@ import {
 } from '@mui/material';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import ImagePreview from '../../components/ImagePreview';
-import { uploadHandler } from '../../firebase/app';
+import { uploadHandler } from '../../firebase/application';
 import UploadImage from 'components/pizzaCardComponent/UploadImage';
 
 export default function Pizza() {

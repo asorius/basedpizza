@@ -30,13 +30,8 @@ const firebaseConfig = {
   messagingSenderId: process.env.FIRE_SENDER_ID,
   appId: process.env.FIRE_APP_ID,
 };
-let app;
-if (getApps().length) {
-  console.log('App is already running..');
-} else {
-  app = initializeApp(firebaseConfig);
-}
-// export app;
+
+export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 
@@ -70,23 +65,27 @@ export const addData = async (
     };
     //Check for country
     const alreadyInDB = await getDataOfSingleCountry(countryName);
+    console.log('already in db');
+    console.log(alreadyInDB);
     if (alreadyInDB) {
       try {
-        //New list with new pizza item added
-        const newList = {
-          ...alreadyInDB.brandsList[brandName].pizzaList,
-          [pizzaData.pizzaName]: pizzaItem,
-        };
-        console.log('updating pizzaa.....');
-        const updatedBrand = { ...brandItem, pizzaList: newList };
+        //Check if brand already exists
+        if (alreadyInDB.brandsList[brandName]) {
+          //add pizza to existing brand   * WORKS *
+          console.log('adding new pizza');
+          await updateDoc(dbRef, {
+            [`brandsList.${brandName}.pizzaList.${pizzaItem.name}`]: pizzaItem,
+          });
+          return { status: true };
+        } else {
+          //add new brand with new pizza *  WORKS *
+          console.log('adding new brand');
+          await updateDoc(dbRef, {
+            [`brandsList.${brandName}`]: brandItem,
+          });
 
-        //update brands collection
-        await updateDoc(dbRef, {
-          brandsList: {
-            [brandName]: updatedBrand,
-          },
-        });
-        return { status: true };
+          return { status: true };
+        }
       } catch (e) {
         throw new Error('Brand couldnt be updated with new pizza');
       }
@@ -99,6 +98,7 @@ export const addData = async (
       return { status: true };
     }
   } catch (e) {
+    console.log(e);
     return { status: false };
   }
 };
@@ -141,14 +141,8 @@ export const updatePizza = async (
   newImage: ImageObject
 ) => {
   try {
-    // console.log({ brandName, pizzaName });
     const countryRef = doc(db, 'pizzas', countryName);
-    //Get required brand with all  pizzas to loop over
-    // const brandObject: BrandObject = await getDataOfSingleBrand(
-    //   brandName,
-    //   countryName
-    // );
-    // console.log(brandObject);
+
     const pizzaCountry = await getDataOfSingleCountry(countryName);
 
     if (countryRef && pizzaCountry && newImage) {
@@ -207,29 +201,12 @@ export const getDataOfSingleBrand = async (
           return countryElement;
         }
       });
-      // const finalList = allCountries.reduce(
-      //   (accumulator, countryElement: CountryObject) => {
-      //     const countryBrandNames = Object.keys(countryElement.brandsList);
-      //     if (countryBrandNames.includes(brand)) {
-      //       return [...accumulator, countryElement];
-      //     }
-      //     return accumulator;
-      //   },
-      //   []
-      // );
+
       requiredResponse = finalList;
     }
     console.log('from filter getsignlebrand');
     console.log(requiredResponse);
     return requiredResponse;
-    //Return specific brand from all countries
-    // const docRef = doc(db, 'pizzas', country);
-    // const docSnap = await getDoc(docRef);
-    // if (docSnap.exists()) {
-    //   return docSnap.data();
-    // } else {
-    //   console.log('No such document!');
-    // }
   } catch (e) {
     console.log(e);
   }
@@ -242,7 +219,9 @@ export const getDataOfSingleCountry = async (country: string) => {
     const docRef = doc(db, 'pizzas', country);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
-      return docSnap.data();
+      console.log('data from getsinglecoutry');
+      console.log({ dd: docSnap.data() });
+      return docSnap.data() as CountryObject;
     } else {
       console.log('No such document!');
     }

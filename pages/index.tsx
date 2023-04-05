@@ -8,7 +8,7 @@ import Layout from '../components/Layout';
 import Link from 'next/link';
 import { getAuth } from 'firebase/auth';
 import Search from '../components/searchComponent';
-import { getAllPizzas, db } from '../firebase/app';
+import { getAllPizzas, db } from '../firebase/application';
 import { BrandObject, BrandsList, CountryObject, PizzaObject } from 'lib/types';
 import Loading from 'lib/Loading';
 import { lazy } from 'react';
@@ -99,6 +99,22 @@ export default function Home() {
         if (filtered.length === 1) {
           const selectedBrand = filtered[0].brandsList[brandInputValue];
           setDisplayBrand(selectedBrand);
+          if (nameInputValue.length > 0) {
+            const pizza = selectedBrand.pizzaList[nameInputValue];
+            console.log(pizza);
+            const newListWithOnePizza: CountryObject = {
+              ...foundCountry,
+              brandsList: {
+                [selectedBrand.info.name]: {
+                  ...selectedBrand,
+                  pizzaList: { pizza },
+                },
+              },
+            };
+            console.log({ newListWithOnePizza });
+            setDisplayCountries([newListWithOnePizza]);
+            return;
+          }
         }
         setDisplayCountries([foundCountry]);
         return;

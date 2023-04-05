@@ -4,7 +4,7 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import FormHelperText from '@mui/material/FormHelperText';
 import { capitalized } from 'lib/utils';
-import { getDataOfSingleCountry } from '../../firebase/app';
+import { getDataOfSingleCountry } from '../../firebase/application';
 import { CountryObject } from 'lib/types';
 
 export default function CountrySelect(props: {

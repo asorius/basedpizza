@@ -2,7 +2,7 @@ import formidable from 'formidable';
 import fs from 'fs';
 import { NextApiRequest } from 'next';
 import { Writable } from 'stream';
-import { uploadHandler } from '../firebase/app';
+import { uploadHandler } from '../firebase/application';
 // const cb = (file: any) => console.log(file);
 const myWrite = new Writable({
   write(chunk, encoding, cb) {
