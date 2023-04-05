@@ -10,7 +10,7 @@ import {
 import { yupResolver } from '@hookform/resolvers/yup';
 import { capitalized } from '../lib/utils';
 import { Button, FormControl, TextField, FormHelperText } from '@mui/material';
-import { signIn } from '../firebase/authentication';
+import { signIn, signInWithGoogle } from '../firebase/authentication';
 import Loading from '../lib/Loading';
 interface IFormInputs {
   email: string;
@@ -37,7 +37,6 @@ export default function Login() {
   });
   const [error, setError] = React.useState<string>('');
   const router = useRouter();
-
   const onSubmit: SubmitHandler<IFormInputs> = async (data) => {
     const response = await signIn(data);
     if (!response) {
@@ -45,7 +44,12 @@ export default function Login() {
     }
     router.push('/');
   };
-
+  const handleGoogleSignIn = async () => {
+    const resultUser = await signInWithGoogle();
+    if (resultUser) {
+      router.push('/');
+    }
+  };
   const errorHandler: SubmitErrorHandler<IFormInputs> = (error) => {
     console.log(error);
   };
@@ -118,6 +122,7 @@ export default function Login() {
 
         {error && <h3>{error}</h3>}
       </form>
+      <button onClick={() => handleGoogleSignIn()}>with google</button>
     </div>
   );
 }

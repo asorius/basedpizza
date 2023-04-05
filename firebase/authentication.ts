@@ -2,11 +2,15 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithRedirect,
 } from 'firebase/auth';
-// import { app } from './app';
+import { app } from './application';
+const provider = new GoogleAuthProvider();
 
 // Initialize Firebase Authentication and get a reference to the service
-const auth = getAuth();
+const auth = getAuth(app);
 interface IUserInput {
   email: string;
   password: string;
@@ -66,4 +70,25 @@ const signIn = async ({ email, password }: IUserInput) => {
     return error;
   }
 };
-export { registerNewUser, signIn, auth };
+const signInWithGoogle = async () => {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    const user = result.user;
+    if (user) {
+      console.log(user);
+      return user;
+    }
+  } catch (error: any) {
+    // Handle Errors here.
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    // The email of the user's account used.
+    const email = error.customData.email;
+    // The AuthCredential type that was used.
+    console.log(errorCode);
+    console.log(errorMessage);
+    console.log(email);
+  }
+};
+export { registerNewUser, signIn, auth, signInWithGoogle };

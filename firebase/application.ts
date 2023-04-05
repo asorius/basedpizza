@@ -65,8 +65,6 @@ export const addData = async (
     };
     //Check for country
     const alreadyInDB = await getDataOfSingleCountry(countryName);
-    console.log('already in db');
-    console.log(alreadyInDB);
     if (alreadyInDB) {
       try {
         //Check if brand already exists
@@ -204,8 +202,6 @@ export const getDataOfSingleBrand = async (
 
       requiredResponse = finalList;
     }
-    console.log('from filter getsignlebrand');
-    console.log(requiredResponse);
     return requiredResponse;
   } catch (e) {
     console.log(e);
@@ -219,8 +215,6 @@ export const getDataOfSingleCountry = async (country: string) => {
     const docRef = doc(db, 'pizzas', country);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
-      console.log('data from getsinglecoutry');
-      console.log({ dd: docSnap.data() });
       return docSnap.data() as CountryObject;
     } else {
       console.log('No such document!');
