@@ -100,6 +100,7 @@ export default function Home() {
           const selectedBrand = filtered[0].brandsList[brandInputValue];
           setDisplayBrand(selectedBrand);
           if (nameInputValue.length > 0) {
+            // STILL NEED TO FIX FILTERING BY PIZZA NAME
             const pizza = selectedBrand.pizzaList[nameInputValue];
             console.log(pizza);
             const newListWithOnePizza: CountryObject = {

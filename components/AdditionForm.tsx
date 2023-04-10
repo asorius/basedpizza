@@ -117,18 +117,10 @@ export default function AdditionForm() {
   const errorHandler: SubmitErrorHandler<FormInputs> = (error) => {
     console.log(error);
   };
-  // if (isSubmitting) {
-  //   return <h2>Submitting form...</h2>;
-  // }
+  if (isSubmitting) {
+    return <h2>Submitting form...</h2>;
+  }
 
-  // if (!responseStatus) {
-  //   return (
-  //     <div>
-  //       <h2>Error!</h2>
-  //       <button onClick={() => router.reload()}>Try again</button>
-  //     </div>
-  //   );
-  // }
   return (
     <form
       onSubmit={handleSubmit(onSubmit, errorHandler)}

@@ -76,7 +76,6 @@ const signInWithGoogle = async () => {
     const credential = GoogleAuthProvider.credentialFromResult(result);
     const user = result.user;
     if (user) {
-      console.log(user);
       return user;
     }
   } catch (error: any) {
