@@ -33,7 +33,6 @@ export default function ImageDisplay(props: Props) {
               cursor: 'pointer',
             }}
             onClick={() => {
-              console.log('cliked on image');
               setZoom(true);
             }}
           />
@@ -54,7 +53,6 @@ export default function ImageDisplay(props: Props) {
                 alt='Mountains'
                 src={url}
                 onClick={() => {
-                  console.log('clicked ' + url);
                   setCurrentImage(url);
                 }}
                 width={75}
@@ -71,6 +69,7 @@ export default function ImageDisplay(props: Props) {
             src={currentImage}
             open={showZoom}
             onClose={() => setZoom(false)}
+            imageList={images}
           />,
           document.body
         )}

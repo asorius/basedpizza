@@ -1,6 +1,5 @@
 import React from 'react';
-import { useState } from 'react';
-import { Box, Modal } from '@mui/material';
+import { Box, Modal, ImageList, ImageListItem } from '@mui/material';
 import Backdrop from '@mui/material/Backdrop';
 import Fade from '@mui/material/Fade';
 import Image from 'next/image';
@@ -8,16 +7,31 @@ type Props = {
   src: string;
   open: boolean;
   onClose: () => void;
+  imageList: string[];
 };
-function clamp(value: number, min: number, max: number) {
-  return Math.min(Math.max(value, min), max);
-}
-const ZoomableImage = ({ src, onClose, open }: Props) => {
+const style = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 'clamp(350px,100%,100rem)',
+  aspectRatio: '2',
+  bgcolor: '#000',
+  border: '2px solid #000',
+  overflow: 'hidden',
+  boxShadow: 24,
+  cursor: 'zoom-in',
+  p: 4,
+};
+const ZoomableImage = ({ src, onClose, open, imageList }: Props) => {
   const [zoomStatus, setZoomStatus] = React.useState(false);
   const [startingPosition, setStartingPosition] = React.useState({
     x: 0,
     y: 0,
   });
+
+  const [currentImage, setCurrentImage] = React.useState<string | null>(null);
+
   const imageRef = React.useRef<HTMLImageElement>(null);
   const handleMouseMove = (event: React.MouseEvent<HTMLImageElement>) => {
     const imageContainer = event.currentTarget;
@@ -30,9 +44,8 @@ const ZoomableImage = ({ src, onClose, open }: Props) => {
     if (imageRef) {
       if (imageRef.current) {
         if (imageContainer.contains(imageRef.current) && zoomStatus) {
-          imageRef.current.style.position = 'absolute';
-          imageRef.current.style.left = 4 * moveDistanceX + 'px';
-          imageRef.current.style.top = 4 * moveDistanceY + 'px';
+          imageRef.current.style.left = 2 * moveDistanceX + 'px';
+          imageRef.current.style.top = 2 * moveDistanceY + 'px';
         } else {
           imageRef.current.style.transform = `scale(1)`;
           imageRef.current.style.left = '0';
@@ -62,7 +75,6 @@ const ZoomableImage = ({ src, onClose, open }: Props) => {
           // console.log(x?);
           imageRef.current.style.transition = 'transform 0.3s';
           imageRef.current.style.transform = `scale(2)`;
-          imageRef.current.style.position = 'absolute';
           imageRef.current.style.cursor = 'move';
         } else {
           imageRef.current.style.transform = `scale(1)`;
@@ -73,20 +85,7 @@ const ZoomableImage = ({ src, onClose, open }: Props) => {
       }
     }
   };
-  const style = {
-    position: 'absolute' as 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 'clamp(350px,80vw,100rem)',
-    aspectRatio: '2',
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    overflow: 'hidden',
-    boxShadow: 24,
-    cursor: 'zoom-in',
-    p: 4,
-  };
+
   return (
     <Modal
       open={open}
@@ -94,27 +93,52 @@ const ZoomableImage = ({ src, onClose, open }: Props) => {
       aria-labelledby='modal-large-image'
       aria-describedby='modal-enlarged-image'
       closeAfterTransition
-      slots={{ backdrop: Backdrop }}
-      // slotProps={ }
-    >
+      slots={{ backdrop: Backdrop }}>
       <Fade in={open}>
-        <Box
-          sx={style}
-          // onMouseEnter={() => setZoomStatus(true)}
-          onMouseLeave={() => setZoomStatus(false)}
-          onClick={(e) => {
-            initZoom(e);
-            setZoomStatus(!zoomStatus);
-          }}
-          onMouseMove={handleMouseMove}>
-          <Image
-            ref={imageRef}
-            src={src}
-            alt=''
-            fill
-            // style={{ width: zoomedWidth, height: zoomedHeight }}
-          />
-        </Box>
+        <div>
+          <Box
+            sx={style}
+            onMouseLeave={() => setZoomStatus(false)}
+            onClick={(e) => {
+              initZoom(e);
+              setZoomStatus(!zoomStatus);
+            }}
+            onMouseMove={handleMouseMove}>
+            <Image
+              ref={imageRef}
+              src={currentImage || src}
+              alt=''
+              fill
+              style={{
+                objectFit: 'contain',
+              }}
+            />
+          </Box>
+          <ImageList
+            cols={1}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              top: '50%',
+              left: '2%',
+              width: '5rem',
+              height: '25%',
+            }}>
+            {imageList.map((url: string, ind: number) => (
+              <ImageListItem key={ind}>
+                <Image
+                  alt='Mountains'
+                  src={url}
+                  onClick={() => {
+                    setCurrentImage(url);
+                  }}
+                  width={75}
+                  height={50}
+                />
+              </ImageListItem>
+            ))}
+          </ImageList>
+        </div>
       </Fade>
     </Modal>
   );
