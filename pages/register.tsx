@@ -12,6 +12,7 @@ import { capitalized } from '../lib/utils';
 import { Button, FormControl, TextField, FormHelperText } from '@mui/material';
 import { registerNewUser } from '../firebase/authentication';
 import Loading from '../lib/Loading';
+import { signInWithGoogle } from '../firebase/authentication';
 
 interface IFormInputs {
   email: string;
@@ -55,6 +56,12 @@ export default function Register() {
   const [error, setError] = React.useState<string>('');
   const router = useRouter();
 
+  const handleGoogleSignIn = async () => {
+    const resultUser = await signInWithGoogle();
+    if (resultUser) {
+      router.push('/');
+    }
+  };
   const onSubmit: SubmitHandler<IFormInputs> = async (data) => {
     const response = await registerNewUser(data);
     if (!response) {
@@ -157,6 +164,7 @@ export default function Register() {
 
         {error && <h3>{error}</h3>}
       </form>
+      <button onClick={() => handleGoogleSignIn()}>with google</button>
     </div>
   );
 }

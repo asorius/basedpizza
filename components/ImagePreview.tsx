@@ -1,10 +1,10 @@
 import Image from 'next/image';
 import React from 'react';
-interface TProps {
+interface Props {
   image: File | null;
-  deleteFunc: Function;
+  deleteFunc: (arg: string) => void;
 }
-export default function ImagePreview({ image, deleteFunc }: TProps) {
+export default function ImagePreview({ image, deleteFunc }: Props) {
   // TODO: ADD DELETE FUNCTIONALITY ON IMAGE PREVIEW
   // IDEA: PROVIDE GRAY PIZZA BASE IMAGE PLACEHOLDER FOR PREVIEW CONTAINER
   return (

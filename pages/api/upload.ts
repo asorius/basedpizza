@@ -1,11 +1,11 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { parseForm, FormidableError } from '../../lib/form-upload';
+import { parseForm } from '../../lib/form-upload';
 import fs from 'fs';
 import * as dotenv from 'dotenv';
 dotenv.config();
 // import { uploadHandler } from '../../firebase/app';
-import formidable from 'formidable';
+// import formidable from 'formidable';
 export const config = { api: { bodyParser: false } };
 
 // ------------------------------

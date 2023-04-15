@@ -47,10 +47,6 @@ const registerNewUser = async ({
       throw new Error();
     }
   } catch (error: any) {
-    // for (const key in error) {
-    //   console.log(key);
-    // }
-    // console.log(error.customData._tokenResponse.error.message);
     return { error: error.customData._tokenResponse.error.message };
   }
 };

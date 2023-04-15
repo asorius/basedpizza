@@ -18,12 +18,7 @@ import {
 } from '@mui/material';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import ImagePreview from './ImagePreview';
-import {
-  addData,
-  getAllPizzas,
-  getDataOfSingleCountry,
-  uploadHandler,
-} from '../firebase/application';
+import { addData, uploadHandler } from '../firebase/application';
 import { getAuth } from 'firebase/auth';
 import { app } from '../firebase/application';
 import { useRouter } from 'next/router';
@@ -103,8 +98,7 @@ export default function AdditionForm() {
           pizzaCreator: userId,
           imageList: [imageObject],
         });
-        console.log(pizzaAddResponse);
-        if (pizzaAddResponse.status) {
+        if (pizzaAddResponse.status && isSubmitSuccessful) {
           router.push(`/pizzas/${country}/${brand}/${name}`);
         } else {
           // setResponseStatus(false);

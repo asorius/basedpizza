@@ -15,13 +15,13 @@ import {
   PizzaObject,
   BrandObject,
   BrandData,
-  SinglePizza,
   CountryData,
   CountryObject,
   PizzaFormInput,
 } from '../lib/types';
 const firebaseConfig = {
   // apiKey: process.env.FIRE_API_KEY <-------throws an error with authentication, works with hardcoding,
+  // apiKey: process.env.FIRE_API_KEY ,
   apiKey: 'AIzaSyCDlQja-OMDJOXrMgx8qheIolHHE7ypErs',
   authDomain: 'react-df350.firebaseapp.com',
   databaseURL: 'https://react-df350.firebaseio.com',
@@ -41,19 +41,20 @@ export const addData = async (
   try {
     const { brandName, countryName } = pizzaData;
     const dbRef = doc(db, 'pizzas', countryName);
-
+    //Construct pizza item
     const pizzaItem: PizzaObject = {
       name: pizzaData.pizzaName,
       price: pizzaData.price,
       creator: pizzaData.pizzaCreator,
       imageList: pizzaData.imageList,
     };
-
+    //Add pizza name as a new property
     const pizzaList = { [pizzaData.pizzaName]: pizzaItem };
-
+    //Set brand name
     const brandData: BrandData = { name: brandName };
+    //Set country name
     const countryData: CountryData = { name: countryName };
-
+    //Construct brand item
     const brandItem: BrandObject = {
       info: brandData,
       pizzaList,
@@ -63,32 +64,31 @@ export const addData = async (
       info: countryData,
       brandsList: { [brandName]: brandItem },
     };
-    //Check for country
-    const alreadyInDB = await getDataOfSingleCountry(countryName);
-    if (alreadyInDB) {
+    //Check if country already exists in database
+    const countryFromDB = await getDataOfSingleCountry(countryName);
+    if (countryFromDB) {
       try {
         //Check if brand already exists
-        if (alreadyInDB.brandsList[brandName]) {
-          //add pizza to existing brand   * WORKS *
-          console.log('adding new pizza');
+        if (countryFromDB.brandsList[brandName]) {
+          //Add pizza to existing brand
+
           await updateDoc(dbRef, {
             [`brandsList.${brandName}.pizzaList.${pizzaItem.name}`]: pizzaItem,
           });
           return { status: true };
         } else {
-          //add new brand with new pizza *  WORKS *
-          console.log('adding new brand');
+          //There's no brand with such name
+          //Add *NEW* Brand with *NEW* pizza
           await updateDoc(dbRef, {
             [`brandsList.${brandName}`]: brandItem,
           });
-
           return { status: true };
         }
       } catch (e) {
         throw new Error('Brand couldnt be updated with new pizza');
       }
     } else {
-      //Add new document *countryName* collection
+      //Create a new collection of *countryName*
       await setDoc(dbRef, countryItem, {
         merge: false,
       });
@@ -114,15 +114,15 @@ export const getDataOfSinglePizza = async (
       const requestedBrand = countryItem.brandsList[brandName];
       //Find the specific pizza
       const requestedPizza: PizzaObject = requestedBrand.pizzaList[pizzaName];
-      if (!requestedBrand || !requestedPizza)
+      if (!requestedBrand || !requestedPizza) {
         throw new Error('Pizza not found');
+      }
       requestedBrand.pizzaList = { [pizzaName]: requestedPizza };
-      //Return new brand object like item with requested pizza as the only pizza in the list (UN-SURE)
+      //Return *NEW* brand-item-like object with requested pizza as the only pizza in the list (UN-SURE)
       const response: CountryObject = {
         info: countryItem.info,
         brandsList: { [brandName]: requestedBrand },
       };
-      console.log(response);
       return response;
     } else {
       console.log('No such document!');
@@ -145,24 +145,12 @@ export const updatePizza = async (
 
     if (countryRef && pizzaCountry && newImage) {
       const parentBrand = pizzaCountry.brandsList[brandName];
-      // Iterate through all pizzas in that brand, add image to the pizza with matching name
-      const oldpizza = parentBrand.pizzaList[pizzaName];
-      const oldImageList = parentBrand.pizzaList[pizzaName].imageList;
-      const newImageList = [...oldImageList, newImage];
+      parentBrand.pizzaList[pizzaName].imageList.push(newImage);
 
-      const updatedList = {
-        ...pizzaCountry.brandsList[brandName].pizzaList,
-        [pizzaName]: { ...oldpizza, imageList: newImageList },
-      };
-      const updatedBrand = {
-        ...pizzaCountry.brandsList[brandName],
-        pizzaList: updatedList,
-      };
-
-      //update brands
+      //Update brands
       await updateDoc(countryRef, {
         brandsList: {
-          [brandName]: updatedBrand,
+          [brandName]: parentBrand,
         },
       });
     }
@@ -179,17 +167,17 @@ export const getDataOfSingleBrand = async (
   try {
     const allCountries = await getAllPizzas();
     if (!allCountries) {
-      console.log('coudlnt get all countries');
+      console.log('Couldnt get all countries');
       return;
     }
-    let requiredResponse;
+    let response;
     if (country) {
       //If we want to return brand from a specific country
       const requiredCountry: CountryObject | undefined = allCountries.find(
         (countryElement: CountryObject) => countryElement.info.name === country
       );
       if (requiredCountry) {
-        requiredResponse = requiredCountry.brandsList[brand];
+        response = requiredCountry.brandsList[brand];
       }
     } else {
       //otherwise return a list of countries with a list of its brands that is required
@@ -200,18 +188,16 @@ export const getDataOfSingleBrand = async (
         }
       });
 
-      requiredResponse = finalList;
+      response = finalList;
     }
-    return requiredResponse;
+    return response;
   } catch (e) {
     console.log(e);
   }
 };
 export const getDataOfSingleCountry = async (country: string) => {
-  console.log(country);
   if (!country) return;
   try {
-    console.log('getting data...');
     const docRef = doc(db, 'pizzas', country);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
@@ -226,7 +212,6 @@ export const getDataOfSingleCountry = async (country: string) => {
 export const getAllPizzas = async () => {
   try {
     const querySnapshot = await getDocs(collection(db, 'pizzas'));
-    //Should set type to CountryObject, but for now the doc.data() interferes by adding DocumentData propery, IDK how to avoid it atm
     let countryList: CountryObject[] = [];
     querySnapshot.forEach((doc) => {
       const countryItem = doc.data() as CountryObject;

@@ -87,22 +87,22 @@ export default function Home() {
       return;
     }
     if (brandInputValue.length > 0 && countryInputValue.length > 0) {
-      const filtered = countriesOriginal.filter((country: CountryObject) =>
-        country.brandsList.hasOwnProperty(brandInputValue)
+      const filteredByBrand = countriesOriginal.filter(
+        (country: CountryObject) =>
+          country.brandsList.hasOwnProperty(brandInputValue)
       );
-      const foundCountry = filtered.find(
+      const foundCountry = filteredByBrand.find(
         (country: CountryObject) =>
           country.info.name.toLowerCase() === countryInputValue.toLowerCase()
       );
       if (foundCountry) {
         setBrandSearchNames(Object.keys(foundCountry.brandsList));
-        if (filtered.length === 1) {
-          const selectedBrand = filtered[0].brandsList[brandInputValue];
+        if (filteredByBrand.length === 1) {
+          const selectedBrand = filteredByBrand[0].brandsList[brandInputValue];
           setDisplayBrand(selectedBrand);
           if (nameInputValue.length > 0) {
             // STILL NEED TO FIX FILTERING BY PIZZA NAME
             const pizza = selectedBrand.pizzaList[nameInputValue];
-            console.log(pizza);
             const newListWithOnePizza: CountryObject = {
               ...foundCountry,
               brandsList: {
@@ -112,7 +112,6 @@ export default function Home() {
                 },
               },
             };
-            console.log({ newListWithOnePizza });
             setDisplayCountries([newListWithOnePizza]);
             return;
           }
@@ -120,7 +119,7 @@ export default function Home() {
         setDisplayCountries([foundCountry]);
         return;
       }
-      setDisplayCountries(filtered);
+      setDisplayCountries(filteredByBrand);
       return;
     } else if (brandInputValue.length > 0) {
       //loop through countries and leave the ones that have that brand

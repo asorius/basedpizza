@@ -7,7 +7,7 @@ export interface PizzaObject {
   name: string;
   creator: string;
   price: number;
-  imageList: ImageObject[] | [];
+  imageList: ImageObject[];
 }
 
 export interface BrandData {
