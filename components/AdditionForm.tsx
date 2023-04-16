@@ -98,7 +98,7 @@ export default function AdditionForm() {
           pizzaCreator: userId,
           imageList: [imageObject],
         });
-        if (pizzaAddResponse.status && isSubmitSuccessful) {
+        if (pizzaAddResponse.status) {
           router.push(`/pizzas/${country}/${brand}/${name}`);
         } else {
           // setResponseStatus(false);
@@ -108,6 +108,7 @@ export default function AdditionForm() {
       console.log(error);
     }
   };
+
   const errorHandler: SubmitErrorHandler<FormInputs> = (error) => {
     console.log(error);
   };

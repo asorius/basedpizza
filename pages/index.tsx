@@ -13,7 +13,7 @@ import { BrandObject, BrandsList, CountryObject, PizzaObject } from 'lib/types';
 import Loading from 'lib/Loading';
 import { lazy } from 'react';
 import { collection, doc, onSnapshot, query } from 'firebase/firestore';
-
+import Globe from '../components/mapComponent';
 const Main = lazy(() => import('../components/mainComponent'));
 export default function Home() {
   const [displayCountries, setDisplayCountries] = React.useState<
@@ -71,18 +71,18 @@ export default function Home() {
     };
   }, []);
 
-  const inputController = (e: any) => {
+  const inputController = React.useCallback((e: any) => {
     if (e.target) {
       const key: string = e.target.name;
       const val: string = e.target.value;
       setSearchInput((old) => ({ ...old, [key]: val }));
     }
-  };
+  }, []);
+
   React.useEffect(() => {
     const countryInputValue = searchInput.country;
     const brandInputValue = searchInput.brand;
     const nameInputValue = searchInput.name;
-
     if (!displayCountries) {
       return;
     }
@@ -151,6 +151,11 @@ export default function Home() {
 
   return (
     <Layout>
+      <Globe
+        countryList={countriesOriginal.map(
+          (country: CountryObject) => country.info.name
+        )}
+      />
       {user ? (
         <Link href={'/pizzas/'}>
           <Button>Create a pizza</Button>
