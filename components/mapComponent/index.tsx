@@ -23,7 +23,7 @@ interface Marker {
 }
 const Map = ({ countryList }: Props) => {
   const [markers2, setMarkers] = React.useState<Marker[]>([]);
-  const [textSize, setTextSize] = React.useState(10);
+  const [textSize, setTextSize] = React.useState(0);
   React.useEffect(() => {
     countries.forEach((co) => {
       const name = co[3] as string;
@@ -42,15 +42,15 @@ const Map = ({ countryList }: Props) => {
       projection='geoMercator'
       style={{ width: '40rem', strokeWidth: '1' }}
       fill='#f7f7f7'
-      stroke='#a8a8a8'>
+      stroke='#a8a8a8'
+      strokeWidth={1}>
       <ZoomableGroup
         onMoveEnd={({ zoom }) => {
-          setTextSize(Math.floor(16 - zoom));
+          zoom > 4 ? setTextSize(Math.floor(16 - zoom)) : setTextSize(0);
         }}>
         <Geographies geography={geoUrl}>
           {({ geographies }) =>
             geographies.map((geo) => {
-              console.log(geo);
               const countryNameMatch = markers2.find(
                 (marker: Marker) =>
                   marker.name.toLowerCase() ===
@@ -75,18 +75,22 @@ const Map = ({ countryList }: Props) => {
               strokeLinecap='round'
               strokeLinejoin='round'
               transform='translate(-12, -24)'>
-              <circle cx='12' cy='10' r='3' />
+              <circle
+                cx='12'
+                cy='10'
+                r='3'
+                fill='#FF5533'
+                stroke='#FF5533'
+                strokeWidth='1'
+              />
               <path d='M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z' />
             </g>
             <text
               textAnchor='middle'
               y={textSize}
               fill='black'
-              // stroke='black'
               strokeWidth={0}
-              style={{ fontSize: `${textSize}px`, fontFamily: 'Arial' }}
-              // style={{ fontSize: `clamp(1rem,${textSize}px,2rem)` }}
-            >
+              style={{ fontSize: `${textSize}px`, fontFamily: 'Arial' }}>
               {name}
             </text>
           </Marker>
