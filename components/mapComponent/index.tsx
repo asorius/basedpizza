@@ -14,6 +14,7 @@ import worldCountriesJSON from 'assets/countries-110m.json';
 import Loading from 'lib/Loading';
 import Card from '@mui/material/Card';
 import Backdrop from '@mui/material/Backdrop';
+import { NodeNextRequest } from 'next/dist/server/base-http/node';
 interface Props {
   countryList: string[];
 }
@@ -39,7 +40,7 @@ const Map = ({ countryList }: Props) => {
   const [markers2, setMarkers] = React.useState<Marker[]>([]);
   const [textSize, setTextSize] = React.useState(0);
 
-  const [scale, setScale] = React.useState(100);
+  const [scale, setScale] = React.useState(300);
   const [center, setCenter] = React.useState<[number, number]>([0, 0]);
   React.useEffect(() => {
     const list = generateMarks(countryList);
@@ -54,10 +55,13 @@ const Map = ({ countryList }: Props) => {
       if (length > 1) {
         if (ind < length) {
           setCenter(markers2[ind].coordinates);
-          setScale(500);
+          setScale(800);
+          setTextSize(20);
           ind++;
         } else {
-          setScale(100);
+          setScale(300);
+          setTextSize(0);
+
           setCenter([0, 0]);
           ind = 0;
         }
@@ -66,7 +70,13 @@ const Map = ({ countryList }: Props) => {
     return () => clearInterval(countryRotation);
   }, [markers2]);
   return (
-    <Card style={{ position: 'relative' }}>
+    <div
+      style={{
+        position: 'relative',
+        zIndex: '-1',
+        width: '100%',
+        height: '100%',
+      }}>
       <Backdrop open={markers2.length < 1} style={{ position: 'absolute' }}>
         <Loading />
       </Backdrop>
@@ -74,16 +84,18 @@ const Map = ({ countryList }: Props) => {
         projection='geoMercator'
         style={{
           width: '100%',
+          height: '100%',
           strokeWidth: '1',
+          border: 'none',
         }}
         fill='#f7f7f7'
-        stroke='#a8a8a8'
-        projectionConfig={{ scale, center }}
-        strokeWidth={1}>
+        // stroke='#a8a8a8'
+        projectionConfig={{ scale, center }}>
         <ZoomableGroup
-          onMoveEnd={({ zoom }) => {
-            zoom > 4 ? setTextSize(Math.floor(16 - zoom)) : setTextSize(0);
-          }}>
+        // onMoveEnd={({ zoom }) => {
+        //   zoom > 4 ? setTextSize(Math.floor(16 - zoom)) : setTextSize(0);
+        // }}
+        >
           <Geographies geography={worldCountriesJSON}>
             {({ geographies }) =>
               geographies.map((geo) => {
@@ -133,7 +145,7 @@ const Map = ({ countryList }: Props) => {
           ))}
         </ZoomableGroup>
       </ComposableMap>
-    </Card>
+    </div>
   );
 };
 

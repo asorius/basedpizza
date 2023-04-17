@@ -27,7 +27,7 @@ export default function BasicStack({ brandObjects }: Props) {
   const [isRendering, setRendering] = React.useState(true);
 
   React.useEffect(() => {
-    setTimeout(() => setRendering(!isRendering), 500);
+    setTimeout(() => setRendering(!isRendering), 300);
   }, []);
   if (isRendering) {
     return <Loading />;
@@ -40,17 +40,17 @@ export default function BasicStack({ brandObjects }: Props) {
           return (
             <Item key={i}>
               <Typography variant='h3' gutterBottom>
-                {brandItem.brandInfo.brandName}
+                {brandItem.info.name}
               </Typography>
               {pizzaList.map((pizzaItem: PizzaObject, index: number) => {
-                const pizzaName = pizzaItem.pizzaName;
+                const pizzaName = pizzaItem.name;
                 return (
                   <PizzaCard
                     key={index}
-                    brandInfo={brandItem.brandInfo}
+                    brandInfo={brandItem.info}
                     pizzaItem={pizzaItem}
                     user={user}
-                    link={`/pizzas/${brandItem.brandInfo.brandName}/${pizzaName}`}
+                    link={`/pizzas/${brandItem.info.name}/${pizzaName}`}
                   />
                 );
               })}

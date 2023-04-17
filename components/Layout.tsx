@@ -15,9 +15,7 @@ export default function Home({ children }: { children?: React.ReactNode }) {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <Navbar />
-      <main>
-        <Container>{children}</Container>
-      </main>
+      <main>{children}</main>
     </>
   );
 }

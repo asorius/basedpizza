@@ -14,6 +14,8 @@ import Loading from 'lib/Loading';
 import { lazy } from 'react';
 import { collection, doc, onSnapshot, query } from 'firebase/firestore';
 import Globe from '../components/mapComponent';
+import { Box, Typography } from '@mui/material';
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 const Main = lazy(() => import('../components/mainComponent'));
 export default function Home() {
   const [displayCountries, setDisplayCountries] = React.useState<
@@ -151,35 +153,60 @@ export default function Home() {
 
   return (
     <Layout>
-      <Globe
-        countryList={countriesOriginal.map(
-          (country: CountryObject) => country.info.name
+      <Box sx={{ width: '100vw', height: '50vh', position: 'relative' }}>
+        <Container sx={{ position: 'relative' }}>
+          <Box sx={{ position: 'absolute' }}>
+            <Typography variant='h1'>Pizza Base</Typography>
+            <Typography variant='h4'>
+              Search and share real pizzas around the world.{' '}
+            </Typography>
+          </Box>
+        </Container>
+        <Globe
+          countryList={countriesOriginal.map(
+            (country: CountryObject) => country.info.name
+          )}
+        />
+      </Box>
+      <Container>
+        {user ? (
+          <Box>
+            <Typography variant='h5'>
+              Didn't find what you were looking for?
+            </Typography>
+
+            <Link href={'/pizzas/'}>
+              <Button
+                variant='contained'
+                color='primary'
+                size='large'
+                endIcon={<CreateNewFolderIcon />}>
+                Add new pizza
+              </Button>
+            </Link>
+          </Box>
+        ) : (
+          <Typography variant='h5'>
+            Can't find what you wanted? Register or sign to create add a new
+            Pizza.{' '}
+          </Typography>
         )}
-      />
-      {user ? (
-        <Link href={'/pizzas/'}>
-          <Button>Create a pizza</Button>
-        </Link>
-      ) : (
-        <h2>
-          Can't find what you wanted? Register or sign to create a new Pizza.{' '}
-        </h2>
-      )}
-      {displayCountries?.length ? (
-        <>
-          <Search
-            onChangeController={inputController}
-            brandValue={searchInput.brand}
-            nameValue={searchInput.name}
-            selectedCountries={displayCountries}
-            brandsList={brandSearchNames}
-            selectedBrand={displayBrand}
-          />
-          <Main countryObjects={displayCountries}></Main>
-        </>
-      ) : (
-        <div>No pizzas in the Pizzabase yet.</div>
-      )}
+        {displayCountries?.length ? (
+          <>
+            <Search
+              onChangeController={inputController}
+              brandValue={searchInput.brand}
+              nameValue={searchInput.name}
+              selectedCountries={displayCountries}
+              brandsList={brandSearchNames}
+              selectedBrand={displayBrand}
+            />
+            <Main countryObjects={displayCountries}></Main>
+          </>
+        ) : (
+          <div>No pizzas in the Pizzabase yet.</div>
+        )}
+      </Container>
     </Layout>
   );
 }
