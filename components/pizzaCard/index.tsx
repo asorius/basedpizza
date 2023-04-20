@@ -13,8 +13,8 @@ import {
   BrandObject,
   CountryData,
   PizzaObject,
-} from '../../lib/types';
-import Loading from '../../lib/Loading';
+} from '../../utils/types';
+import Loading from '../../utils/Loading';
 import ImageDisplay from './ImageDisplay';
 
 interface Props {

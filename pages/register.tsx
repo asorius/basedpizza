@@ -8,10 +8,10 @@ import {
   SubmitErrorHandler,
 } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { capitalized } from '../lib/utils';
+import { capitalized } from '../utils/utils';
 import { Button, FormControl, TextField, FormHelperText } from '@mui/material';
 import { registerNewUser } from '../firebase/authentication';
-import Loading from '../lib/Loading';
+import Loading from '../utils/Loading';
 import { signInWithGoogle } from '../firebase/authentication';
 
 interface IFormInputs {

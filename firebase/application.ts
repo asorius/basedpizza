@@ -18,7 +18,7 @@ import {
   CountryData,
   CountryObject,
   PizzaFormInput,
-} from '../lib/types';
+} from '../utils/types';
 const firebaseConfig = {
   // apiKey: process.env.FIRE_API_KEY <-------throws an error with authentication, works with hardcoding,
   // apiKey: process.env.FIRE_API_KEY ,

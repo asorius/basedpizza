@@ -2,20 +2,14 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
-import {
-  BrandObject,
-  BrandsList,
-  CountryObject,
-  PizzaObject,
-} from '../../lib/types';
-import Loading from '../../lib/Loading';
-// import Country from './Country';
+import { BrandsList, CountryObject } from '../../utils/types';
 import Brand from './Brand';
+import { useDisplayData } from 'context/data/DataContextProvider';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-interface Props {
-  countryObjects: CountryObject[];
-}
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,
@@ -23,13 +17,26 @@ const Item = styled(Paper)(({ theme }) => ({
   textAlign: 'center',
   color: theme.palette.text.secondary,
 }));
-export default function Main({ countryObjects }: Props) {
-  const [isRendering, setRendering] = React.useState(true);
-
+export default function Main() {
+  const displayState = useDisplayData();
+  if (!displayState) {
+    return (
+      <Card
+        variant='outlined'
+        style={{ backgroundColor: '#f8d7da', color: '#721c24' }}>
+        <CardContent>
+          <Typography variant='h6'>H A L T !</Typography>
+          <Typography variant='body1'>
+            There seems to be no pizzas present on the base ! Buh-bye !
+          </Typography>
+        </CardContent>
+      </Card>
+    );
+  }
   return (
     <Box sx={{ width: '100%' }}>
       <Stack spacing={2}>
-        {countryObjects.map((countryItem: CountryObject, i: number) => {
+        {displayState.countries.map((countryItem: CountryObject, i: number) => {
           const brandsList: BrandsList = countryItem.brandsList;
           return (
             <Item key={i}>
@@ -37,7 +44,7 @@ export default function Main({ countryObjects }: Props) {
                 {countryItem.info.name}
               </Typography>
               <Brand
-                brandsObject={brandsList}
+                brandObjectsArray={brandsList}
                 countryName={countryItem.info.name}></Brand>
             </Item>
           );

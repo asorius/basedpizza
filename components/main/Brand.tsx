@@ -4,12 +4,11 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import { getAuth, signOut } from 'firebase/auth';
+import { getAuth } from 'firebase/auth';
 
-import PizzaCard from '../pizzaCardComponent';
-import { BrandObject, PizzaObject, PizzasList } from '../../lib/types';
-import Loading from '../../lib/Loading';
-import { doc, onSnapshot } from 'firebase/firestore';
+import PizzaCard from '../pizzaCard';
+import { PizzasList, BrandsList } from '../../utils/types';
+import Loading from '../../utils/Loading';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -19,16 +18,16 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 interface Props {
-  brandsObject: BrandObject;
+  brandObjectsArray: BrandsList;
   countryName: string;
 }
-export default function Main({ brandsObject, countryName }: Props) {
+export default function Main({ brandObjectsArray, countryName }: Props) {
   const auth = getAuth();
   const user = auth.currentUser;
   const [isRendering, setRendering] = React.useState(true);
   const brandsArray = React.useMemo(
-    () => Object.entries(brandsObject),
-    [brandsObject]
+    () => Object.entries(brandObjectsArray),
+    [brandObjectsArray]
   );
 
   React.useEffect(() => {

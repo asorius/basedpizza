@@ -3,9 +3,9 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import FormHelperText from '@mui/material/FormHelperText';
-import { capitalized } from 'lib/utils';
+import { capitalized } from 'utils/utils';
 import { getDataOfSingleCountry } from '../../firebase/application';
-import { CountryObject } from 'lib/types';
+import { CountryObject } from 'utils/types';
 
 export default function CountrySelect(props: {
   label: string;

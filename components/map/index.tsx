@@ -11,10 +11,11 @@ import {
 } from 'react-simple-maps';
 import countries from './countries.json';
 import worldCountriesJSON from 'assets/countries-110m.json';
-import Loading from 'lib/Loading';
+import Loading from 'utils/Loading';
 import Card from '@mui/material/Card';
 import Backdrop from '@mui/material/Backdrop';
-import { NodeNextRequest } from 'next/dist/server/base-http/node';
+import { useData } from 'context/data/DataContextProvider';
+import { CountryObject } from 'utils/types';
 interface Props {
   countryList: string[];
 }
@@ -36,39 +37,42 @@ const generateMarks = (countriesProp: string[]) => {
   });
   return markerList;
 };
-const Map = ({ countryList }: Props) => {
-  const [markers2, setMarkers] = React.useState<Marker[]>([]);
+const Map = () => {
+  const [markers, setMarkers] = React.useState<Marker[]>([]);
   const [textSize, setTextSize] = React.useState(0);
-
   const [scale, setScale] = React.useState(300);
   const [center, setCenter] = React.useState<[number, number]>([0, 0]);
+  const originalState = useData();
   React.useEffect(() => {
+    if (!originalState) return;
+    const countryList = originalState.map(
+      (country: CountryObject) => country.info.name
+    );
     const list = generateMarks(countryList);
     setMarkers(list);
-  }, [countryList]);
+  }, [originalState]);
   // some kind of loop that loops over the countries, zooms in on them , shows amount of pizzas in there, and move onto next one
 
   React.useEffect(() => {
-    const length = markers2.length;
+    const length = markers.length;
     let ind = 0;
     const countryRotation = setInterval(() => {
       if (length > 1) {
         if (ind < length) {
-          setCenter(markers2[ind].coordinates);
+          setCenter(markers[ind].coordinates);
           setScale(800);
           setTextSize(20);
           ind++;
         } else {
           setScale(300);
           setTextSize(0);
-
           setCenter([0, 0]);
           ind = 0;
         }
       }
     }, 3000);
     return () => clearInterval(countryRotation);
-  }, [markers2]);
+  }, [markers]);
   return (
     <div
       style={{
@@ -77,7 +81,7 @@ const Map = ({ countryList }: Props) => {
         width: '100%',
         height: '100%',
       }}>
-      <Backdrop open={markers2.length < 1} style={{ position: 'absolute' }}>
+      <Backdrop open={markers.length < 1} style={{ position: 'absolute' }}>
         <Loading />
       </Backdrop>
       <ComposableMap
@@ -91,15 +95,11 @@ const Map = ({ countryList }: Props) => {
         fill='#f7f7f7'
         // stroke='#a8a8a8'
         projectionConfig={{ scale, center }}>
-        <ZoomableGroup
-        // onMoveEnd={({ zoom }) => {
-        //   zoom > 4 ? setTextSize(Math.floor(16 - zoom)) : setTextSize(0);
-        // }}
-        >
+        <ZoomableGroup>
           <Geographies geography={worldCountriesJSON}>
             {({ geographies }) =>
               geographies.map((geo) => {
-                const countryNameMatch = markers2.find(
+                const countryNameMatch = markers.find(
                   (marker: Marker) =>
                     marker.name.toLowerCase() ===
                     geo.properties.name.toLowerCase()
@@ -114,7 +114,7 @@ const Map = ({ countryList }: Props) => {
               })
             }
           </Geographies>
-          {markers2.map(({ index, name, coordinates, markerOffset }) => (
+          {markers.map(({ index, name, coordinates, markerOffset }) => (
             <Marker key={index} coordinates={coordinates}>
               <g
                 fill='none'

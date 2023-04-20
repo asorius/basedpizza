@@ -6,11 +6,9 @@ import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { getAuth, signOut } from 'firebase/auth';
 
-import PizzaCard from './pizzaCardComponent';
-import { BrandObject, PizzaObject } from '../lib/types';
-import Loading from '../lib/Loading';
-import { doc, onSnapshot } from 'firebase/firestore';
-
+import PizzaCard from './pizzaCard';
+import { BrandObject, PizzaObject } from '../utils/types';
+import Loading from '../utils/Loading';
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,
@@ -35,6 +33,7 @@ export default function BasicStack({ brandObjects }: Props) {
   return (
     <Box sx={{ width: '100%' }}>
       <Stack spacing={2}>
+        {/* something is fishy here lol */}
         {brandObjects.map((brandItem: BrandObject, i: number) => {
           const pizzaList: PizzaObject[] = brandItem.pizzaList;
           return (

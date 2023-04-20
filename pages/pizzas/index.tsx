@@ -4,8 +4,8 @@ import Layout from '../../components/Layout';
 import { getAuth } from 'firebase/auth';
 // import { app } from '../../firebase/application';
 import { app, getAllPizzas } from '../../firebase/application';
-import { BrandObject, PizzaObject } from 'lib/types';
-import Loading from '../../lib/Loading';
+import { BrandObject, PizzaObject } from 'utils/types';
+import Loading from '../../utils/Loading';
 import AuthRoute from 'components/AuthRoute';
 const Addition = lazy(() => import('../../components/AdditionForm'));
 export default function PizzaForm() {

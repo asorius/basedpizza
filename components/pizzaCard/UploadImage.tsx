@@ -9,13 +9,13 @@ import {
   SubmitHandler,
   SubmitErrorHandler,
 } from 'react-hook-form';
-import { capitalized, compressImage } from '../../lib/utils';
-import Loading from '../../lib/Loading';
+import { capitalized, compressImage } from '../../utils/utils';
+import Loading from '../../utils/Loading';
 import { Button, FormControl, FormHelperText } from '@mui/material';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import ImagePreview from '../ImagePreview';
 import { uploadHandler } from '../../firebase/application';
-import { ImageObject } from 'lib/types';
+import { ImageObject } from 'utils/types';
 interface FormInputs {
   image: File | null;
 }

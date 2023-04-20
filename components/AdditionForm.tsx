@@ -6,7 +6,11 @@ import {
   SubmitErrorHandler,
 } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { capitalized, compressImage, formValidationSchema } from '../lib/utils';
+import {
+  capitalized,
+  compressImage,
+  formValidationSchema,
+} from '../utils/utils';
 import {
   Button,
   FormControl,
@@ -23,8 +27,8 @@ import { getAuth } from 'firebase/auth';
 import { app } from '../firebase/application';
 import { useRouter } from 'next/router';
 
-import AutocompleteInput from '../lib/AutocompleteInput';
-import CountrySelect from './searchComponent/CountrySelect';
+import AutocompleteInput from '../utils/AutocompleteInput';
+import CountrySelect from './search/CountrySelect';
 
 interface FormInputs {
   country: string;

@@ -1,14 +1,14 @@
 import React from 'react';
 import { getDataOfSinglePizza, updatePizza } from '../../firebase/application';
 import { useRouter } from 'next/router';
-import PizzaCard from '../../components/pizzaCardComponent';
+import PizzaCard from '../../components/pizzaCard';
 import AuthRoute from '../../components/AuthRoute';
 import {
   BrandObject,
   BrandsList,
   CountryObject,
   SinglePizza,
-} from '../../lib/types';
+} from '../../utils/types';
 import Layout from '../../components/Layout';
 import { getAuth } from 'firebase/auth';
 
@@ -19,7 +19,7 @@ import {
   SubmitErrorHandler,
 } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { capitalized, compressImage } from '../../lib/utils';
+import { capitalized, compressImage } from '../../utils/utils';
 import {
   Button,
   FormControl,
@@ -31,7 +31,7 @@ import {
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import ImagePreview from '../../components/ImagePreview';
 import { uploadHandler } from '../../firebase/application';
-import UploadImage from 'components/pizzaCardComponent/UploadImage';
+import UploadImage from 'components/pizzaCard/UploadImage';
 
 export default function Pizza() {
   const auth = getAuth();
