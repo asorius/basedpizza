@@ -29,6 +29,7 @@ import { useRouter } from 'next/router';
 
 import AutocompleteInput from '../utils/AutocompleteInput';
 import CountrySelect from './search/CountrySelect';
+import { userContext } from 'context/user/UserContextProvider';
 
 interface FormInputs {
   country: string;
@@ -58,20 +59,21 @@ export default function AdditionForm() {
     defaultValues: defaults,
   });
   const router = useRouter();
-  const auth = getAuth(app);
-  const user = auth.currentUser;
+  const { user } = userContext();
+  // const auth = getAuth(app);
+  // const user = auth.currentUser;
 
   const [image, setImages] = React.useState<File | null>(null);
   const [responseStatus, setResponseStatus] = React.useState<boolean>(true);
 
   const [brandNames, setBrandNames] = React.useState<string[]>([]);
 
-  // React.useEffect(() => {
-  //   if (isSubmitSuccessful) {
-  //     reset(defaults);
-  //     setImages(null);
-  //   }
-  // }, [isSubmitSuccessful, reset]);
+  React.useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset(defaults);
+      setImages(null);
+    }
+  }, [isSubmitSuccessful, reset]);
   const deleteFunc = (e: any) => {
     setImages(null);
   };
@@ -86,7 +88,10 @@ export default function AdditionForm() {
       if (imageUploadResponse && user) {
         //get user id
         const userId = user.uid;
-
+        if (!userId) {
+          console.log('NO USER');
+          return;
+        }
         //created image object with references
         const imageObject = {
           creator: userId,

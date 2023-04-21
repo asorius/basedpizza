@@ -6,6 +6,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import CountrySelect from './CountrySelect';
 import { useDisplayData, useData } from 'context/data/DataContextProvider';
+import AutocompleteSearchInput from './AutocompleteSearchInput';
 export default function Search() {
   const [brandOptions, setBrandOptions] = React.useState<string[]>([]);
   const [pizzaOptions, setPizzaOptions] = React.useState<string[]>([]);
@@ -33,7 +34,6 @@ export default function Search() {
     const countryInputValue = searchInput.country;
     const brandInputValue = searchInput.brand;
     const pizzaInputValue = searchInput.name;
-    console.log(pizzaInputValue);
     if (!countriesOriginal) {
       return;
     }
@@ -73,7 +73,7 @@ export default function Search() {
           inputController({ target: { name: 'country', value } })
         }
       />
-      <FormControl sx={{ m: 1, minWidth: 120 }} size='small'>
+      {/* <FormControl sx={{ m: 1, minWidth: 120 }} size='small'>
         <InputLabel id='select-brand'>Brand</InputLabel>
         <Select
           labelId='select-brand'
@@ -91,9 +91,15 @@ export default function Search() {
             </MenuItem>
           ))}
         </Select>
-      </FormControl>
-
-      <FormControl sx={{ m: 1, minWidth: 120 }} size='small'>
+      </FormControl> */}
+      <AutocompleteSearchInput
+        optionsList={brandOptions}
+        label='Brand'
+        valueController={(value: string) =>
+          inputController({ target: { name: 'brand', value } })
+        }
+      />
+      {/* <FormControl sx={{ m: 1, minWidth: 120 }} size='small'>
         <InputLabel id='select-name'>Name</InputLabel>
         <Select
           labelId='select-name'
@@ -112,7 +118,14 @@ export default function Search() {
             </MenuItem>
           ))}
         </Select>
-      </FormControl>
+      </FormControl> */}
+      <AutocompleteSearchInput
+        optionsList={pizzaOptions}
+        label='Pizza'
+        valueController={(value: string) =>
+          inputController({ target: { name: 'name', value } })
+        }
+      />
     </>
   );
 }

@@ -52,9 +52,7 @@ export const updateDisplay = ({
     brands: [],
     pizzas: [],
   };
-  // console.log(originalList);
   if (!originalList) {
-    // console.log('no list');
     return displayData;
   }
   if (countryInputValue) {
@@ -120,7 +118,11 @@ const displayDataReducer = (
     }
   }
 };
-export function WithDataContext({ children }: { children: React.ReactNode }) {
+export function DataContextProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [displayState, dispatch] = useReducer(
     displayDataReducer,
     initialDisplayState
