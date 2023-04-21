@@ -5,6 +5,7 @@ import {
   CountryData,
   CountryObject,
   PizzaObject,
+  PizzasList,
 } from 'utils/types';
 import React, { useEffect, useMemo, useState } from 'react';
 import { createContext, useReducer, useContext } from 'react';
@@ -28,8 +29,8 @@ interface Dispatch {
 
 interface DisplayState {
   countries: CountryObject[];
-  brands?: string[];
-  pizzas?: string[];
+  brands?: BrandsList[];
+  pizzas?: PizzasList[];
 }
 
 const DataContext = createContext<State | null>(null);
@@ -46,11 +47,7 @@ export const updateDisplay = ({
   brandInputValue,
   pizzaInputValue,
 }: UpdateFnProps) => {
-  const displayData: {
-    countries: CountryObject[];
-    brands: any[];
-    pizzas: any[];
-  } = {
+  const displayData: DisplayState = {
     countries: originalList,
     brands: [],
     pizzas: [],
@@ -80,7 +77,13 @@ export const updateDisplay = ({
     const filteredByPizza = displayData.countries.filter(
       (country: CountryObject) => {
         const brands = country.brandsList;
-        return Object.keys(brands).includes(pizzaInputValue);
+        const pizzasInBrand = Object.values(brands).map(
+          (brand: BrandObject) => brand.pizzaList
+        );
+        const pizzaNames = pizzasInBrand.map(
+          (pizzas: PizzasList) => Object.keys(pizzas)[0]
+        );
+        return pizzaNames.includes(pizzaInputValue);
       }
     );
     displayData.countries = filteredByPizza;
@@ -88,10 +91,9 @@ export const updateDisplay = ({
   const allBrands = displayData.countries.map(
     (country: CountryObject) => country.brandsList
   );
-  const allPizzas = allBrands.map((brand) => brand.pizzaList);
+  const allPizzas = allBrands.map((brand) => Object.values(brand)[0].pizzaList);
   displayData.brands = allBrands;
-
-  // displayData.pizzas = allPizzas;
+  displayData.pizzas = allPizzas;
   return displayData;
 };
 

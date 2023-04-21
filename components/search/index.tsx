@@ -32,7 +32,8 @@ export default function Search() {
   React.useEffect(() => {
     const countryInputValue = searchInput.country;
     const brandInputValue = searchInput.brand;
-    const nameInputValue = searchInput.name;
+    const pizzaInputValue = searchInput.name;
+    console.log(pizzaInputValue);
     if (!countriesOriginal) {
       return;
     }
@@ -43,7 +44,7 @@ export default function Search() {
           originalList: countriesOriginal,
           countryInputValue,
           brandInputValue,
-          nameInputValue,
+          pizzaInputValue,
         },
       });
   }, [searchInput]);
@@ -99,7 +100,7 @@ export default function Search() {
           id='select-small-name'
           label='Name'
           name='name'
-          disabled={pizzaOptions.length > 1 ? false : true}
+          // disabled={pizzaOptions.length > 1 ? false : true}
           value={searchInput.name}
           onChange={inputController}>
           <MenuItem value=''>
