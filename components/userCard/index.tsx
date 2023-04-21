@@ -1,34 +1,34 @@
 import React from 'react';
-import { User } from 'context/user/types';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SummarizeIcon from '@mui/icons-material/Summarize';
 import {
-  Card,
   CardHeader,
   Avatar,
-  CardMedia,
-  CardContent,
-  Typography,
   CardActions,
-  IconButton,
   Button,
   Link,
   Stack,
   Box,
 } from '@mui/material';
-import { useRouter } from 'next/router';
 import { getAuth, signOut } from 'firebase/auth';
 import { userContext } from 'context/user/UserContextProvider';
 
 export default function UserCard() {
+  const [userStatus, setStatus] = React.useState(false);
   const { user } = userContext();
+  React.useEffect(() => {
+    if (user) {
+      setStatus(true);
+    } else {
+      setStatus(false);
+    }
+  }, [user]);
   const auth = getAuth();
-  const router = useRouter();
-  if (!user) {
+  if (!user || !userStatus) {
     return (
       <>
         <Link href={'/signin'}>
-          <Button variant='contained'>Sign In</Button>
+          <Button variant='outlined'>Sign In</Button>
         </Link>
         <Link href={'/register'}>
           <Button variant='contained'>Register</Button>
@@ -57,7 +57,7 @@ export default function UserCard() {
             variant='outlined'
             endIcon={<LogoutIcon />}
             onClick={() => {
-              router.push('/');
+              setStatus(false);
               signOut(auth);
             }}>
             Log Out
