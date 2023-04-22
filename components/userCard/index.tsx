@@ -12,10 +12,10 @@ import {
 } from '@mui/material';
 import { getAuth, signOut } from 'firebase/auth';
 import { userContext } from 'context/user/UserContextProvider';
-
+import defaultProfilePic from '../../assets/default_profile-min.jpg';
 export default function UserCard() {
   const { user } = userContext();
-
+  console.log(defaultProfilePic);
   const auth = getAuth();
   if (!user) {
     return (
@@ -32,7 +32,15 @@ export default function UserCard() {
   return (
     <Box sx={{ maxWidth: 545 }}>
       <CardHeader
-        avatar={<Avatar aria-label='user' src={user.photoURL || ''} />}
+        avatar={
+          <Avatar
+            aria-label='user'
+            src={user.photoURL || defaultProfilePic.src}
+            sx={{
+              backgroundColor: 'MediumSeaGreen',
+            }}
+          />
+        }
         title={user.displayName}
         subheader={user.email}
       />

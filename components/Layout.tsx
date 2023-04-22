@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import Container from '@mui/material/Container';
 import { useRouter } from 'next/router';
 import BackButton from 'utils/BackButton';
+import backgroundImage from '../assets/background-min.jpg';
 export default function Home({ children }: { children?: React.ReactNode }) {
   const router = useRouter();
   return (
@@ -19,7 +20,15 @@ export default function Home({ children }: { children?: React.ReactNode }) {
       </Head>
       <Navbar />
       {router.pathname !== '/' && <BackButton></BackButton>}
-      <main>{children}</main>
+      <main
+      // style={{
+      //   backgroundImage: `url(${backgroundImage.src})`,
+      //   backgroundRepeat: 'no-repeat',
+      //   backgroundSize: 'cover',
+      // }}
+      >
+        {children}
+      </main>
     </>
   );
 }

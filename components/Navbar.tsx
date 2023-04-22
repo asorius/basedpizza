@@ -14,7 +14,7 @@ export default function Navbar() {
         <Grid container>
           <Grid item xs={4} lg={9}>
             <Link href='/'>
-              <h2>PizzaBase</h2>
+              <h2>PizzaBase 🍕</h2>
               {/* <Image src={base} alt='image of pizza base' /> */}
             </Link>{' '}
           </Grid>

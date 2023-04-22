@@ -92,7 +92,7 @@ const Map = () => {
           strokeWidth: '1',
           border: 'none',
         }}
-        fill='#f7f7f7'
+        // fill='black'
         // stroke='#a8a8a8'
         projectionConfig={{ scale, center }}>
         <ZoomableGroup>
@@ -108,7 +108,7 @@ const Map = () => {
                   <Geography
                     key={geo.rsmKey}
                     geography={geo}
-                    fill={countryNameMatch ? '#b7e1ba' : '#f7f7f7'}
+                    fill={countryNameMatch ? 'mediumseagreen' : '#f7f7f7'}
                   />
                 );
               })

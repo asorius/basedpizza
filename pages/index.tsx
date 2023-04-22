@@ -14,13 +14,21 @@ import Typography from '@mui/material/Typography';
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import { DataContextProvider } from 'context/data/DataContextProvider';
 import { userContext } from 'context/user/UserContextProvider';
+import backgroupImage from '../assets/background-min.jpg';
 const Main = lazy(() => import('../components/main'));
 export default function Home() {
   const { user } = userContext();
 
   return (
     <Layout>
-      <Box sx={{ width: '100vw', height: '50vh', position: 'relative' }}>
+      <Box
+        sx={{
+          width: '100vw',
+          height: '50vh',
+          position: 'relative',
+          isolation: 'isolate',
+          backgroundColor: 'powderblue',
+        }}>
         <Container sx={{ position: 'relative' }}>
           <Box sx={{ position: 'absolute' }}>
             <Typography variant='h1'>Pizza Base</Typography>
