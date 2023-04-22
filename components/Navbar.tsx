@@ -9,7 +9,7 @@ import Image from 'next/image';
 import UserCard from './userCard';
 export default function Navbar() {
   return (
-    <Box color='secondary' sx={{ flexGrow: 1 }}>
+    <Box color='secondary' sx={{ flexGrow: 1 }} id='back-to-top-anchor'>
       <Container>
         <Grid container>
           <Grid item xs={4} lg={9}>

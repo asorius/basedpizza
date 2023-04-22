@@ -22,7 +22,6 @@ export function UserContextProvider({
   // const auth = getAuth();
   React.useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      console.log('User state has changed');
       if (user) {
         setUser((prev) => ({
           ...prev,

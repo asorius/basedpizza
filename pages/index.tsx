@@ -14,8 +14,8 @@ import Typography from '@mui/material/Typography';
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import { DataContextProvider } from 'context/data/DataContextProvider';
 import { userContext } from 'context/user/UserContextProvider';
-import backgroupImage from '../assets/background-min.jpg';
 const Main = lazy(() => import('../components/main'));
+import BackToTop from 'utils/ScrollToTop';
 export default function Home() {
   const { user } = userContext();
 
@@ -71,6 +71,7 @@ export default function Home() {
           </DataContextProvider>
         </Box>
       </Container>
+      <BackToTop></BackToTop>
     </Layout>
   );
 }

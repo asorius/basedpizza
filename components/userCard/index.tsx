@@ -15,7 +15,6 @@ import { userContext } from 'context/user/UserContextProvider';
 import defaultProfilePic from '../../assets/default_profile-min.jpg';
 export default function UserCard() {
   const { user } = userContext();
-  console.log(defaultProfilePic);
   const auth = getAuth();
   if (!user) {
     return (
