@@ -19,10 +19,12 @@ import {
   CountryObject,
   PizzaFormInput,
 } from '../utils/types';
+console.log(process.env);
 const firebaseConfig = {
   // apiKey: process.env.FIRE_API_KEY <-------throws an error with authentication, works with hardcoding,
-  // apiKey: process.env.FIRE_API_KEY ,
-  apiKey: 'AIzaSyCDlQja-OMDJOXrMgx8qheIolHHE7ypErs',
+  apiKey: process.env.NEXT_PUBLIC_FIRE_API_KEY,
+  // AIzaSyCDlQja-OMDJOXrMgx8qheIolHHE7ypErs
+  // apiKey: 'AIzaSyCDlQja-OMDJOXrMgx8qheIolHHE7ypErs',
   authDomain: 'react-df350.firebaseapp.com',
   databaseURL: 'https://react-df350.firebaseio.com',
   projectId: 'react-df350',

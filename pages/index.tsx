@@ -5,12 +5,12 @@ import Button from '@mui/material/Button';
 
 import Layout from '../components/Layout';
 import Link from 'next/link';
-import { getAuth } from 'firebase/auth';
 import Search from '../components/search';
 
 import { lazy } from 'react';
 import Globe from '../components/map';
-import { Box, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import { DataContextProvider } from 'context/data/DataContextProvider';
 import { userContext } from 'context/user/UserContextProvider';

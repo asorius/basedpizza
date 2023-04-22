@@ -133,7 +133,7 @@ export function DataContextProvider({
       ...displayState,
       dispatch,
     }),
-    [displayState]
+    [displayState.countries.length]
   );
   useEffect(() => {
     const getAllData = async () => {
