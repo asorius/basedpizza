@@ -32,6 +32,8 @@ export function UserContextProvider({
             uid: user.uid,
           },
         }));
+      } else {
+        setUser(initialState);
       }
     });
   }, [auth]);

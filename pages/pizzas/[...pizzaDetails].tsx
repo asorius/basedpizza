@@ -1,41 +1,15 @@
 import React from 'react';
-import { getDataOfSinglePizza, updatePizza } from '../../firebase/application';
+import { getDataOfSinglePizza } from '../../firebase/application';
 import { useRouter } from 'next/router';
 import PizzaCard from '../../components/pizzaCard';
-import AuthRoute from '../../components/AuthRoute';
-import {
-  BrandObject,
-  BrandsList,
-  CountryObject,
-  SinglePizza,
-} from '../../utils/types';
+import { BrandObject, CountryObject } from '../../utils/types';
 import Layout from '../../components/Layout';
-import { getAuth } from 'firebase/auth';
 
-import {
-  useForm,
-  Controller,
-  SubmitHandler,
-  SubmitErrorHandler,
-} from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { capitalized, compressImage } from '../../utils/utils';
-import {
-  Button,
-  FormControl,
-  InputLabel,
-  InputAdornment,
-  OutlinedInput,
-  FormHelperText,
-} from '@mui/material';
-import PhotoCamera from '@mui/icons-material/PhotoCamera';
-import ImagePreview from '../../components/ImagePreview';
-import { uploadHandler } from '../../firebase/application';
 import UploadImage from 'components/pizzaCard/UploadImage';
+import { userContext } from 'context/user/UserContextProvider';
 
 export default function Pizza() {
-  const auth = getAuth();
-  const user = auth.currentUser;
+  const { user } = userContext();
   const router = useRouter();
   const [resultCountryObject, setSearchResult] =
     React.useState<CountryObject | null>(null);
@@ -48,7 +22,6 @@ export default function Pizza() {
   const [brandObject, setBrand] = React.useState<BrandObject | null>(null);
   React.useEffect(() => {
     const { pizzaDetails } = router.query;
-    console.log(pizzaDetails);
     if (!pizzaDetails) {
       return;
     }

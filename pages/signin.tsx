@@ -47,7 +47,7 @@ export default function Login() {
   const handleGoogleSignIn = async () => {
     const resultUser = await signInWithGoogle();
     if (resultUser) {
-      router.push('/');
+      router.back();
     }
   };
   const errorHandler: SubmitErrorHandler<IFormInputs> = (error) => {

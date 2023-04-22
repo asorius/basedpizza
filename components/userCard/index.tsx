@@ -14,17 +14,10 @@ import { getAuth, signOut } from 'firebase/auth';
 import { userContext } from 'context/user/UserContextProvider';
 
 export default function UserCard() {
-  const [userStatus, setStatus] = React.useState(false);
   const { user } = userContext();
-  React.useEffect(() => {
-    if (user) {
-      setStatus(true);
-    } else {
-      setStatus(false);
-    }
-  }, [user]);
+
   const auth = getAuth();
-  if (!user || !userStatus) {
+  if (!user) {
     return (
       <>
         <Link href={'/signin'}>
@@ -57,7 +50,6 @@ export default function UserCard() {
             variant='outlined'
             endIcon={<LogoutIcon />}
             onClick={() => {
-              setStatus(false);
               signOut(auth);
             }}>
             Log Out

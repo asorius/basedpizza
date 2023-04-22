@@ -14,16 +14,10 @@ import { registerNewUser } from '../firebase/authentication';
 import Loading from '../utils/Loading';
 import { signInWithGoogle } from '../firebase/authentication';
 
-interface IFormInputs {
+interface FormInputs {
   email: string;
   password: string;
   repeatPassword: string;
-}
-interface IUser {
-  email: string | null;
-  verified: boolean;
-  createdAt: string | undefined;
-  lastSignInTime: string | undefined;
 }
 
 const defaults = {
@@ -48,21 +42,20 @@ export default function Register() {
     reset,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<IFormInputs>({
+  } = useForm<FormInputs>({
     resolver: yupResolver(SignUpSchema),
     defaultValues: defaults,
   });
-  const [user, setUser] = React.useState<IUser | null>(null);
   const [error, setError] = React.useState<string>('');
   const router = useRouter();
 
   const handleGoogleSignIn = async () => {
     const resultUser = await signInWithGoogle();
     if (resultUser) {
-      router.push('/');
+      router.back();
     }
   };
-  const onSubmit: SubmitHandler<IFormInputs> = async (data) => {
+  const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     const response = await registerNewUser(data);
     if (!response) {
       return;
@@ -71,12 +64,11 @@ export default function Register() {
       setError(response.error);
       return;
     } else {
-      // setUser(response);
       router.push('/');
     }
   };
 
-  const errorHandler: SubmitErrorHandler<IFormInputs> = (error) => {
+  const errorHandler: SubmitErrorHandler<FormInputs> = (error) => {
     console.log(error);
   };
   const [isRendering, setRendering] = React.useState(true);

@@ -11,23 +11,15 @@ const provider = new GoogleAuthProvider();
 
 // Initialize Firebase Authentication and get a reference to the service
 const auth = getAuth(app);
-interface IUserInput {
+interface UserInput {
   email: string;
   password: string;
 }
-interface IUser {
-  email: string | null;
-  verified: boolean;
-  createdAt: string | undefined;
-  lastSignInTime: string | undefined;
-}
-interface IError {
-  error: string;
-}
+
 const registerNewUser = async ({
   email,
   password,
-}: IUserInput): Promise<any> => {
+}: UserInput): Promise<any> => {
   try {
     const response = await createUserWithEmailAndPassword(
       auth,
@@ -50,7 +42,7 @@ const registerNewUser = async ({
     return { error: error.customData._tokenResponse.error.message };
   }
 };
-const signIn = async ({ email, password }: IUserInput) => {
+const signIn = async ({ email, password }: UserInput) => {
   try {
     const userCredential = await signInWithEmailAndPassword(
       auth,
@@ -69,7 +61,7 @@ const signIn = async ({ email, password }: IUserInput) => {
 const signInWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, provider);
-    const credential = GoogleAuthProvider.credentialFromResult(result);
+    // const credential = GoogleAuthProvider.credentialFromResult(result);
     const user = result.user;
     if (user) {
       return user;

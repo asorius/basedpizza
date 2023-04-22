@@ -114,8 +114,8 @@ const Map = () => {
               })
             }
           </Geographies>
-          {markers.map(({ index, name, coordinates, markerOffset }) => (
-            <Marker key={index} coordinates={coordinates}>
+          {markers.map(({ name, coordinates, markerOffset }) => (
+            <Marker key={name} coordinates={coordinates}>
               <g
                 fill='none'
                 stroke='#FF5533'
