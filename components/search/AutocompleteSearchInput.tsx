@@ -15,8 +15,9 @@ export default function AutocompleteSearchInput(props: {
       sx={{ width: 300 }}
       options={props.optionsList}
       autoHighlight
-      onInputChange={(e) => {
-        return props.valueController(e.currentTarget.textContent);
+      blurOnSelect
+      onChange={(e, value) => {
+        props.valueController(value);
       }}
       renderOption={(props, option) => (
         <Box
