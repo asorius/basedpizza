@@ -51,7 +51,6 @@ const Map = () => {
     const list = generateMarks(countryList);
     setMarkers(list);
   }, [originalState]);
-  // some kind of loop that loops over the countries, zooms in on them , shows amount of pizzas in there, and move onto next one
 
   React.useEffect(() => {
     const length = markers.length;

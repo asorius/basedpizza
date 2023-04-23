@@ -23,8 +23,6 @@ import {
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import ImagePreview from './ImagePreview';
 import { addData, uploadHandler } from '../firebase/application';
-import { getAuth } from 'firebase/auth';
-import { app } from '../firebase/application';
 import { useRouter } from 'next/router';
 
 import AutocompleteInput from '../utils/AutocompleteInput';
@@ -60,22 +58,22 @@ export default function AdditionForm() {
   });
   const router = useRouter();
   const { user } = userContext();
-  // const auth = getAuth(app);
-  // const user = auth.currentUser;
 
-  const [image, setImages] = React.useState<File | null>(null);
-  const [responseStatus, setResponseStatus] = React.useState<boolean>(true);
-
+  const [image, setImage] = React.useState<File | null>(null);
   const [brandNames, setBrandNames] = React.useState<string[]>([]);
 
   React.useEffect(() => {
     if (isSubmitSuccessful) {
       reset(defaults);
-      setImages(null);
+      setImage(null);
     }
   }, [isSubmitSuccessful, reset]);
   const deleteFunc = (e: any) => {
-    setImages(null);
+    setImage(null);
+  };
+  const cropHandler = (croppedImageFile: File) => {
+    // console.log(croppedImage.imageURL);
+    setImage(croppedImageFile);
   };
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     const { name, price, brand, country } = data;
@@ -190,14 +188,7 @@ export default function AdditionForm() {
           </FormControl>
         )}
       />
-      {/* <TextField
-                {...field}
-                variant='outlined'
-                label='Brand'
-                error={errors.hasOwnProperty('brand')}></TextField>
-              <FormHelperText>
-                {capitalized(errors.brand?.message)}
-              </FormHelperText> */}
+
       <FormControl error={errors.hasOwnProperty('image')}>
         <Button
           component='label'
@@ -225,7 +216,7 @@ export default function AdditionForm() {
                       quality: 0.5,
                     });
                     field.onChange(e);
-                    compressedFile && setImages(compressedFile);
+                    compressedFile && setImage(compressedFile);
                   }
                 }}
               />
@@ -235,7 +226,10 @@ export default function AdditionForm() {
         <FormHelperText>{capitalized(errors.image?.message)}</FormHelperText>
       </FormControl>
       <Button type='submit'>Submit</Button>
-      <ImagePreview image={image} deleteFunc={deleteFunc}></ImagePreview>
+      <ImagePreview
+        image={image}
+        updateFunc={cropHandler}
+        deleteFunc={deleteFunc}></ImagePreview>
     </form>
   );
 }

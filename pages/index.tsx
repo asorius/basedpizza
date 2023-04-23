@@ -71,7 +71,7 @@ export default function Home() {
           </DataContextProvider>
         </Box>
       </Container>
-      <BackToTop></BackToTop>
+      {/* <BackToTop></BackToTop> */}
     </Layout>
   );
 }

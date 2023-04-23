@@ -1,14 +1,10 @@
 import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import CssBaseline from '@mui/material/CssBaseline';
 import useScrollTrigger from '@mui/material/useScrollTrigger';
 import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
 import Fab from '@mui/material/Fab';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import Fade from '@mui/material/Fade';
+import Zoom from '@mui/material/Zoom';
 
 interface Props {
   /**
@@ -30,18 +26,21 @@ function ScrollTop(props: Props) {
     threshold: 100,
   });
 
-  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    const anchor = (
-      (event.target as HTMLDivElement).ownerDocument || document
-    ).querySelector('#back-to-top-anchor');
+  const handleClick = React.useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      const anchor = (
+        (event.target as HTMLDivElement).ownerDocument || document
+      ).querySelector('#back-to-top-anchor');
 
-    if (anchor) {
-      anchor.scrollIntoView({
-        block: 'center',
-        behavior: 'smooth',
-      });
-    }
-  };
+      if (anchor) {
+        anchor.scrollIntoView({
+          block: 'center',
+          behavior: 'smooth',
+        });
+      }
+    },
+    []
+  );
 
   return (
     <Fade in={trigger}>
@@ -55,9 +54,9 @@ function ScrollTop(props: Props) {
   );
 }
 
-export default function BackToTop(props: Props) {
+export default function BackToTop() {
   return (
-    <ScrollTop {...props}>
+    <ScrollTop>
       <Fab size='small' aria-label='scroll back to top'>
         <KeyboardArrowUpIcon />
       </Fab>

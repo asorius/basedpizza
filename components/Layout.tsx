@@ -20,15 +20,7 @@ export default function Home({ children }: { children?: React.ReactNode }) {
       </Head>
       <Navbar />
       {router.pathname !== '/' && <BackButton></BackButton>}
-      <main
-      // style={{
-      //   backgroundImage: `url(${backgroundImage.src})`,
-      //   backgroundRepeat: 'no-repeat',
-      //   backgroundSize: 'cover',
-      // }}
-      >
-        {children}
-      </main>
+      <main>{children}</main>
     </>
   );
 }

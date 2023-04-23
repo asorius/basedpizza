@@ -60,7 +60,7 @@ const ZoomableImage = ({ src, onClose, open, imageList }: Props) => {
     //clientx is global screen
     const x = e.clientX;
     const y = e.clientY;
-    //offsetleft is parent coords(not changing?)
+    //offsetleft is parent coords(not changing)
     const parentX = current.offsetLeft;
     const parentY = current.offsetTop;
     const positionCoords = {
