@@ -1,7 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-// import * as d3 from 'd3';
-// import * as topojson from 'topojson-client';
-// import worldData from './world-50m.json';
+
 import {
   ComposableMap,
   Geographies,
@@ -55,6 +53,18 @@ const Map = () => {
   React.useEffect(() => {
     const length = markers.length;
     let ind = 0;
+    if (length === 0) {
+      setScale(300);
+      setTextSize(0);
+      setCenter([0, 0]);
+      return;
+    }
+    if (length === 1) {
+      setCenter(markers[0].coordinates);
+      setScale(800);
+      setTextSize(20);
+      return;
+    }
     const countryRotation = setInterval(() => {
       if (length > 1) {
         if (ind < length) {
@@ -79,6 +89,7 @@ const Map = () => {
         zIndex: '-1',
         width: '100%',
         height: '100%',
+        pointerEvents: 'none',
       }}>
       <Backdrop open={markers.length < 1} style={{ position: 'absolute' }}>
         <Loading />

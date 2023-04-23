@@ -17,6 +17,7 @@ export default function AutocompleteInput({
   errorText: string;
   label: string;
 }) {
+  //DOESNT REGISTER COUNTRY VALUE UPON ENTER PRESS
   return (
     <Stack spacing={2} sx={{ width: 300 }}>
       <Autocomplete
