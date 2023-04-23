@@ -200,6 +200,7 @@ export const getDataOfSingleBrand = async (
 export const getDataOfSingleCountry = async (country: string) => {
   if (!country) return;
   try {
+    console.log(country);
     const docRef = doc(db, 'pizzas', country);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {

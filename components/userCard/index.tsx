@@ -11,11 +11,12 @@ import {
   Box,
 } from '@mui/material';
 import { getAuth, signOut } from 'firebase/auth';
+import { auth } from '../../firebase/authentication';
 import { userContext } from 'context/user/UserContextProvider';
 import defaultProfilePic from '../../assets/default_profile-min.jpg';
 export default function UserCard() {
   const { user } = userContext();
-  const auth = getAuth();
+
   if (!user) {
     return (
       <>

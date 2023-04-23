@@ -53,6 +53,7 @@ const Map = () => {
   React.useEffect(() => {
     const length = markers.length;
     let ind = 0;
+    //might still be fucky with 0 and loading spinner
     if (length === 0) {
       setScale(300);
       setTextSize(0);

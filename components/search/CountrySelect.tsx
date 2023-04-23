@@ -18,7 +18,7 @@ export default function CountrySelect(props: {
 }) {
   return (
     <Autocomplete
-      id='country-select-demo'
+      id='country-select'
       sx={{ width: 300 }}
       options={
         props.customCountriesList
@@ -30,10 +30,10 @@ export default function CountrySelect(props: {
           : countries
       }
       autoHighlight
-      onInputChange={async (e) => {
-        const countryNameAndCode = e.currentTarget.textContent;
-        if (countryNameAndCode) {
-          const value = countryNameAndCode;
+      blurOnSelect
+      onChange={async (e, countryOption) => {
+        if (countryOption) {
+          const value = countryOption.label;
           if (props.updateValue) {
             props.updateValue(value);
             return;
@@ -44,7 +44,7 @@ export default function CountrySelect(props: {
             const selectedCountry = await getDataOfSingleCountry(value);
 
             if (selectedCountry) {
-              //If there are brands already existing in selected country object create array of brand names
+              //If there are brands already in selected country object create array of brand names
               const list =
                 selectedCountry && Object.keys(selectedCountry.brandsList);
               list && props.listUpdate(list);

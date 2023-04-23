@@ -77,7 +77,6 @@ export default function AdditionForm() {
   };
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     const { name, price, brand, country } = data;
-
     try {
       if (!image) return;
       //NOT SURE IF COUNTRY SHOULD AFFECT THE IMAGE STORAGE  ***FOR LATER

@@ -41,25 +41,28 @@ export default function ImageDisplay(props: Props) {
         <ImageList
           cols={1}
           style={{ position: 'absolute', inset: 0, top: '50%' }}>
-          {images.map((url: string, ind: number) => (
-            <ImageListItem key={ind}>
-              <Image
-                style={{
-                  cursor: 'pointer',
-                  border: `${
-                    currentImage === url ? '1px solid white' : 'none'
-                  }`,
-                }}
-                alt='Mountains'
-                src={url}
-                onClick={() => {
-                  setCurrentImage(url);
-                }}
-                width={75}
-                height={50}
-              />
-            </ImageListItem>
-          ))}
+          {images.length > 1 &&
+            images.map((url: string, ind: number) => (
+              <ImageListItem key={ind}>
+                <Image
+                  style={{
+                    cursor: 'pointer',
+                    objectFit: 'contain',
+                    background: 'black',
+                    border: `${
+                      currentImage === url ? '1px solid white' : 'none'
+                    }`,
+                  }}
+                  alt='Mountains'
+                  src={url}
+                  onClick={() => {
+                    setCurrentImage(url);
+                  }}
+                  width={75}
+                  height={50}
+                />
+              </ImageListItem>
+            ))}
         </ImageList>
       </CardMedia>
       {showZoom &&
