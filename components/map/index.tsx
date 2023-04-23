@@ -23,6 +23,8 @@ interface Marker {
   name: string;
   coordinates: [number, number];
 }
+const DEFAULT_SCALE = 200;
+const DEFAULT_CENTER: [number, number] = [0, 40];
 const generateMarks = (countriesProp: string[]) => {
   let markerList: Marker[] = [];
   countries.forEach((co) => {
@@ -38,8 +40,8 @@ const generateMarks = (countriesProp: string[]) => {
 const Map = () => {
   const [markers, setMarkers] = React.useState<Marker[]>([]);
   const [textSize, setTextSize] = React.useState(0);
-  const [scale, setScale] = React.useState(300);
-  const [center, setCenter] = React.useState<[number, number]>([0, 0]);
+  const [scale, setScale] = React.useState(DEFAULT_SCALE);
+  const [center, setCenter] = React.useState<[number, number]>(DEFAULT_CENTER);
   const originalState = useData();
   React.useEffect(() => {
     if (!originalState) return;
@@ -55,9 +57,9 @@ const Map = () => {
     let ind = 0;
     //might still be fucky with 0 and loading spinner
     if (length === 0) {
-      setScale(300);
+      setScale(DEFAULT_SCALE);
       setTextSize(0);
-      setCenter([0, 0]);
+      setCenter(DEFAULT_CENTER);
       return;
     }
     if (length === 1) {
@@ -74,9 +76,9 @@ const Map = () => {
           setTextSize(20);
           ind++;
         } else {
-          setScale(300);
+          setScale(DEFAULT_SCALE);
           setTextSize(0);
-          setCenter([0, 0]);
+          setCenter(DEFAULT_CENTER);
           ind = 0;
         }
       }
