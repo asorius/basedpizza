@@ -43,8 +43,8 @@ export default function Home() {
       </Box>
       <Container>
         {user ? (
-          <Box>
-            <Typography variant='h5'>
+          <Box p={4} textAlign='center'>
+            <Typography variant='h5' m={4}>
               Didn't find what you were looking for?
             </Typography>
 

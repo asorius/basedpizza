@@ -24,6 +24,7 @@ interface Marker {
   coordinates: [number, number];
 }
 const DEFAULT_SCALE = 200;
+const ZOOM_IN_SCALE = 1000;
 const DEFAULT_CENTER: [number, number] = [0, 40];
 const generateMarks = (countriesProp: string[]) => {
   let markerList: Marker[] = [];
@@ -53,26 +54,25 @@ const Map = () => {
   }, [originalState]);
 
   React.useEffect(() => {
-    const length = markers.length;
+    const markersLength = markers.length;
     let ind = 0;
-    //might still be fucky with 0 and loading spinner
-    if (length === 0) {
+    if (markersLength === 0) {
       setScale(DEFAULT_SCALE);
       setTextSize(0);
       setCenter(DEFAULT_CENTER);
       return;
     }
-    if (length === 1) {
+    if (markersLength === 1) {
       setCenter(markers[0].coordinates);
-      setScale(800);
+      setScale(ZOOM_IN_SCALE);
       setTextSize(20);
       return;
     }
     const countryRotation = setInterval(() => {
-      if (length > 1) {
-        if (ind < length) {
+      if (markersLength > 1) {
+        if (ind < markersLength) {
           setCenter(markers[ind].coordinates);
-          setScale(800);
+          setScale(ZOOM_IN_SCALE);
           setTextSize(20);
           ind++;
         } else {
@@ -94,7 +94,9 @@ const Map = () => {
         height: '100%',
         pointerEvents: 'none',
       }}>
-      <Backdrop open={markers.length < 1} style={{ position: 'absolute' }}>
+      <Backdrop
+        open={markers.length < 1 && !originalState}
+        style={{ position: 'absolute' }}>
         <Loading />
       </Backdrop>
       <ComposableMap

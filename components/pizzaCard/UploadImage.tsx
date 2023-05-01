@@ -104,9 +104,9 @@ export default function UploadImage(props: {
           <FormControl error={errors.hasOwnProperty('image')}>
             <Button
               component='label'
-              variant='contained'
+              variant='outlined'
               startIcon={<PhotoCamera />}>
-              Upload
+              Choose file
               <Controller
                 control={control}
                 name='image'
@@ -141,10 +141,20 @@ export default function UploadImage(props: {
               {capitalized(errors.image?.message)}
             </FormHelperText>
           </FormControl>
-          {image && <Button type='submit'>Submit file</Button>}
+          {image && (
+            <Button type='submit' variant='contained'>
+              Submit file
+            </Button>
+          )}
         </form>
       )}
-      <ImagePreview image={image} deleteFunc={deleteFunc} />
+      {image && (
+        <ImagePreview
+          updateFunc={setImages}
+          image={image}
+          deleteFunc={deleteFunc}
+        />
+      )}
     </>
   );
 }

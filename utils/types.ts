@@ -43,3 +43,9 @@ export interface PizzaFormInput {
   pizzaCreator: string;
   imageList: ImageObject[];
 }
+export interface CountryJSONType {
+  code: string;
+  label: string;
+  phone: string;
+  suggested?: boolean;
+}

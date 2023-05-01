@@ -14,8 +14,9 @@ import {
   CountryData,
   PizzaObject,
 } from '../../utils/types';
-import Loading from '../../utils/Loading';
+import { flagIcon } from '../../utils/utils';
 import ImageDisplay from './ImageDisplay';
+import Grid from '@mui/material/Grid';
 
 interface Props {
   countryInfo?: CountryData;
@@ -33,55 +34,83 @@ export default function PizzaCard({
   user,
   children,
 }: Props) {
-  const [imageUrls, setImages] = React.useState<string[]>([]);
-  React.useEffect(() => {
-    const generateUrls = async () => {
-      if (!pizzaItem.imageList) {
-        console.log('No images available in database');
-        return;
-      }
-      const promiseList = pizzaItem.imageList.map(async (image: any) => {
-        const url = await getDownloadURL(ref(storage, image.imageRef));
-        return url;
-      });
-      const urls = await Promise.all(promiseList).then((values) => values);
-      setImages(urls);
-    };
-    generateUrls();
-  }, [pizzaItem.imageList]);
-  const [isRendering, setRendering] = React.useState(true);
-  React.useEffect(() => {
-    setTimeout(() => setRendering(!isRendering), 500);
-  }, []);
-  if (isRendering) {
-    return <Loading />;
-  }
-  return (
-    <Card sx={{ maxWidth: 345 }}>
-      <CardContent>
-        <Typography gutterBottom variant='h5' component='div'>
-          {countryInfo?.name}
-        </Typography>
-        <Typography gutterBottom variant='h5' component='div'>
-          {pizzaItem.name}
-        </Typography>
-        <Typography gutterBottom variant='h5' component='div'>
-          {brandInfo.name}
-        </Typography>
+  // const [imageUrls, setImages] = React.useState<string[]>([]);
+  // React.useEffect(() => {
+  //   const generateUrls = async () => {
+  //     if (!pizzaItem.imageList) {
+  //       console.log('No images available in database');
+  //       return;
+  //     }
+  //     const promiseList = pizzaItem.imageList.map(async (image: any) => {
+  //       const url = await getDownloadURL(ref(storage, image.imageRef));
+  //       return url;
+  //     });
+  //     const urls = await Promise.all(promiseList).then((values) => values);
+  //     setImages(urls);
+  //   };
+  //   generateUrls();
+  // }, [pizzaItem.imageList]);
 
-        <Typography variant='body2' color='text.secondary'>
-          {pizzaItem.price}
-        </Typography>
-        <ImageDisplay imageList={imageUrls}></ImageDisplay>
-        {link && (
-          <CardActions>
-            <Button size='small'>
-              <Link href={link}>{link}</Link>
-            </Button>
-          </CardActions>
-        )}
-      </CardContent>
-      {children}
+  // if (!imageUrls.length) {
+  //   return <Loading />;
+  // }
+  return (
+    <Card>
+      <Grid container mt={4} alignItems='center' justifyContent='center'>
+        <Grid item md={6} xl={4}>
+          <CardContent>
+            <Grid container>
+              <Grid item xs={12}>
+                <Typography gutterBottom variant='h2' align='center'>
+                  {pizzaItem.name}
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Grid
+                  container
+                  direction='column'
+                  justifyContent='center'
+                  alignItems='stretch'>
+                  <Typography variant='h4' align='center'>
+                    {brandInfo.name}
+                  </Typography>
+                  <Typography variant='h5' align='center'>
+                    {/* <Image */}
+                    {countryInfo && (
+                      <>
+                        <img
+                          loading='lazy'
+                          width='20'
+                          style={{ marginRight: '1rem' }}
+                          src={flagIcon(countryInfo.name).src}
+                          srcSet={flagIcon(countryInfo.name).srcSet}
+                          alt=''
+                        />
+                        {countryInfo.name}
+                      </>
+                    )}
+                  </Typography>
+                  <Typography variant='body2' color='text.secondary'>
+                    {pizzaItem.price}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+
+            <ImageDisplay imageList={pizzaItem.imageList}></ImageDisplay>
+            {link && (
+              <CardActions>
+                <Button size='small'>
+                  <Link href={link}>{link}</Link>
+                </Button>
+              </CardActions>
+            )}
+          </CardContent>
+          <Grid container direction='column' alignContent='center' mb={14}>
+            {children}
+          </Grid>
+        </Grid>
+      </Grid>
     </Card>
   );
 }

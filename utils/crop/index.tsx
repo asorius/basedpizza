@@ -20,7 +20,11 @@ const createImage = (url: any) =>
 
     image.src = url;
   });
-async function getCroppedImg(imageSrc: any, pixelCrop: any) {
+async function getCroppedImg(
+  imageSrc: string,
+  pixelCrop: any,
+  imageName: string
+) {
   const image: any = await createImage(imageSrc);
   const canvas = document.createElement('canvas');
   canvas.width = pixelCrop.width;
@@ -44,7 +48,7 @@ async function getCroppedImg(imageSrc: any, pixelCrop: any) {
   const blob: any = await new Promise((resolve, reject) =>
     canvas.toBlob(resolve, 'image/jpeg', 1)
   );
-  const imageFile = new File([blob], 'temp', {
+  const imageFile = new File([blob], imageName.split('.')[0], {
     type: blob.type,
   });
   return new Promise((resolve, reject) => {
@@ -54,7 +58,13 @@ async function getCroppedImg(imageSrc: any, pixelCrop: any) {
   });
 }
 
-const ImageCropper = ({ sourceImage, open, onClose, setCroppedImage }: any) => {
+const ImageCropper = ({
+  sourceImage,
+  open,
+  onClose,
+  setCroppedImage,
+  imageName,
+}: any) => {
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
@@ -76,6 +86,8 @@ const ImageCropper = ({ sourceImage, open, onClose, setCroppedImage }: any) => {
       slots={{ backdrop: Backdrop }}>
       <Fade in={open}>
         <Box
+          maxWidth={860}
+          minWidth={360}
           sx={{ width: '50vw', margin: '0 auto', border: '1px solid black' }}>
           <Box position={'relative'} sx={{ height: '100vh', width: '100%' }}>
             <Cropper
@@ -100,11 +112,11 @@ const ImageCropper = ({ sourceImage, open, onClose, setCroppedImage }: any) => {
               position: 'absolute',
               bottom: 0,
               left: '50%',
-              width: '50%',
+              width: '100%',
               transform: ' translateX(-50%)',
               height: '10rem',
               display: 'flex',
-              background: 'white',
+              background: 'black',
               padding: '1rem',
               alignIitems: 'center',
             }}>
@@ -141,7 +153,8 @@ const ImageCropper = ({ sourceImage, open, onClose, setCroppedImage }: any) => {
                         e.preventDefault();
                         const croppedImage = await getCroppedImg(
                           sourceImage,
-                          croppedAreaPixels
+                          croppedAreaPixels,
+                          imageName
                         );
                         onClose();
                         setCroppedImage(croppedImage);

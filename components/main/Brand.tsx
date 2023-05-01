@@ -43,10 +43,10 @@ export default function Main({ brandObjectsArray, countryName }: Props) {
         {brandsArray.map(([name, brandItem]) => {
           const pizzaList: PizzasList = brandItem.pizzaList;
           return (
-            <Item key={name}>
-              <Typography variant='h3' gutterBottom>
+            <Item key={name} style={{ backgroundColor: 'mediumseagreen' }}>
+              {/* <Typography variant='h3' gutterBottom>
                 {brandItem.info.name}
-              </Typography>
+              </Typography> */}
               {Object.entries(pizzaList).map(([name, pizzaItem]) => {
                 const pizzaName = pizzaItem.name;
                 return (

@@ -116,25 +116,35 @@ const ZoomableImage = ({ src, onClose, open, imageList }: Props) => {
             />
           </Box>
           <ImageList
-            cols={1}
+            // cols={1}
             style={{
               position: 'absolute',
-              inset: 0,
-              top: '50%',
-              left: '2%',
-              width: '5rem',
-              height: '25%',
+              top: '75%',
+              left: '00%',
+              width: '85%',
+              margin: '.5rem auto',
+              height: '5rem',
+              display: 'flex',
+              justifyContent: 'center',
+              gap: 16,
             }}>
             {imageList.map((url: string, ind: number) => (
-              <ImageListItem key={ind}>
+              <ImageListItem
+                key={ind}
+                sx={{
+                  width: '5rem',
+                  aspectRatio: 1,
+                  position: 'relative',
+                  borderBottom: '1px solid white',
+                  cursor: 'pointer',
+                }}>
                 <Image
-                  alt='Mountains'
+                  alt=''
                   src={url}
                   onClick={() => {
                     setCurrentImage(url);
                   }}
-                  width={75}
-                  height={50}
+                  fill
                 />
               </ImageListItem>
             ))}
