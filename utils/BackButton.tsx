@@ -11,7 +11,7 @@ export default function BackButton() {
         variant='contained'
         color='primary'
         startIcon={<ArrowBackIcon />}
-        onClick={() => router.back()}>
+        onClick={() => router.push('/')}>
         Back
       </Button>
     </Tooltip>
