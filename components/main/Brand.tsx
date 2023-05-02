@@ -6,7 +6,7 @@ import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { getAuth } from 'firebase/auth';
 
-import PizzaCard from '../pizzaCard';
+import PizzaCard from '../PizzaCard';
 import { PizzasList, BrandsList } from '../../utils/types';
 import Loading from '../../utils/Loading';
 
@@ -38,15 +38,12 @@ export default function Main({ brandObjectsArray, countryName }: Props) {
   }
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box>
       <Stack spacing={2}>
         {brandsArray.map(([name, brandItem]) => {
           const pizzaList: PizzasList = brandItem.pizzaList;
           return (
             <Item key={name} style={{ backgroundColor: 'mediumseagreen' }}>
-              {/* <Typography variant='h3' gutterBottom>
-                {brandItem.info.name}
-              </Typography> */}
               {Object.entries(pizzaList).map(([name, pizzaItem]) => {
                 const pizzaName = pizzaItem.name;
                 return (

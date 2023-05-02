@@ -24,7 +24,7 @@ export default function ImagePreview({ image, updateFunc, deleteFunc }: Props) {
     updateFunc(props.imageFile);
   };
   return (
-    <Grid mt={6} style={{ height: '15rem' }}>
+    <Grid mt={6} sx={{ minHeight: '20rem' }}>
       {image && (
         <Box
           key={image.name}
@@ -32,6 +32,7 @@ export default function ImagePreview({ image, updateFunc, deleteFunc }: Props) {
           style={{
             width: '100%',
             aspectRatio: 1,
+            maxWidth: '30rem',
           }}>
           <Image
             src={croppedImage ? croppedImage : URL.createObjectURL(image)}

@@ -5,16 +5,16 @@ import Button from '@mui/material/Button';
 
 import Layout from '../components/Layout';
 import Link from 'next/link';
-import Search from '../components/search';
+import Search from '../components/Search';
 
 import { lazy } from 'react';
-import Globe from '../components/map';
+import Globe from '../components/Map';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import { DataContextProvider } from 'context/data/DataContextProvider';
 import { userContext } from 'context/user/UserContextProvider';
-const Main = lazy(() => import('../components/main'));
+const Main = lazy(() => import('../components/Main'));
 import BackToTop from 'utils/ScrollToTop';
 export default function Home() {
   const { user } = userContext();
@@ -31,9 +31,9 @@ export default function Home() {
         }}>
         <Container sx={{ position: 'relative' }}>
           <Box sx={{ position: 'absolute' }}>
-            <Typography variant='h1'>Pizza Base</Typography>
+            <Typography variant='h1'>Based Pizza</Typography>
             <Typography variant='h4'>
-              Search and share real pizzas around the world.{' '}
+              Search and share pizzas based around the world.{' '}
             </Typography>
           </Box>
         </Container>

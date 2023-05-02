@@ -9,7 +9,7 @@ import {
   SubmitHandler,
   SubmitErrorHandler,
 } from 'react-hook-form';
-import { capitalized, compressImage } from '../../utils/utils';
+import { capitalized, compressImage } from '../../utils';
 import Loading from '../../utils/Loading';
 import { Button, FormControl, FormHelperText } from '@mui/material';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';

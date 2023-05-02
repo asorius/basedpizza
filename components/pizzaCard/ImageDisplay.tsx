@@ -3,7 +3,6 @@ import CardMedia from '@mui/material/CardMedia';
 import ImageList from '@mui/material/ImageList';
 import Image from 'next/image';
 import ImageListItem from '@mui/material/ImageListItem';
-import ZoomableImage from './ZoomableImage';
 import { createPortal } from 'react-dom';
 import { ImageObject } from 'utils/types';
 import Loading from 'utils/Loading';
@@ -12,6 +11,8 @@ import { storage } from '../../firebase/application';
 import Chip from '@mui/material/Chip';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
+import Grid from '@mui/material/Grid';
+import ZoomableImage from './ZoomableImage';
 interface Props {
   imageList: ImageObject[];
 }
@@ -20,6 +21,7 @@ export default function ImageDisplay(props: Props) {
   const [imageUrls, setImageUrls] = React.useState<string[]>([]);
   const [showZoom, setZoom] = React.useState(false);
   React.useEffect(() => {
+    console.log('image display rendered');
     console.log(props.imageList);
     const generateUrls = async () => {
       if (!props.imageList) {
@@ -31,7 +33,8 @@ export default function ImageDisplay(props: Props) {
         return url;
       });
       const urls = await Promise.all(promiseList).then((values) => values);
-      setImageUrls(urls);
+      urls && setImageUrls(urls);
+      console.log(urls);
     };
     generateUrls();
   }, [props.imageList]);
@@ -40,11 +43,13 @@ export default function ImageDisplay(props: Props) {
   }
   return (
     <>
-      <CardMedia style={{ position: 'relative' }}>
+      <CardMedia>
         <Box
           style={{
             position: 'relative',
             width: '100%',
+            minHeight: '20rem',
+            background: 'rgba(0,90,0,.2)',
             aspectRatio: 1,
             overflow: 'hidden',
           }}>
@@ -54,11 +59,10 @@ export default function ImageDisplay(props: Props) {
             // width={700}
             fill
             // height={450}
-            // sizes='100vw'
+            sizes='100vw'
             style={{
-              // width: '100%',
-              // height: 'auto',
               cursor: 'pointer',
+              objectFit: 'contain',
             }}
             onClick={() => {
               setZoom(true);
@@ -82,8 +86,9 @@ export default function ImageDisplay(props: Props) {
         <ImageList
           style={{
             border: '1px solid black',
+            borderRadius: '.3rem',
             display: 'flex',
-            backgroundColor: 'black',
+            backgroundColor: 'rgba(0,90,0,.2)',
             gap: '1rem',
             overflowX: 'scroll',
           }}>

@@ -3,7 +3,7 @@ import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack';
 import Autocomplete from '@mui/material/Autocomplete';
 import FormHelperText from '@mui/material/FormHelperText';
-import { capitalized } from './utils';
+import { capitalized } from '.';
 export default function AutocompleteInput({
   options,
   field,

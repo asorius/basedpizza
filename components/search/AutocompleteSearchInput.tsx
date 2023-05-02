@@ -2,7 +2,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import { capitalized } from 'utils/utils';
+import { capitalized } from 'utils';
 
 export default function AutocompleteSearchInput(props: {
   label: string;

@@ -10,7 +10,7 @@ export default function Home({ children }: { children?: React.ReactNode }) {
   return (
     <>
       <Head>
-        <title>Pizza Base</title>
+        <title>Based Pizza</title>
         <meta
           name='description'
           content='Pizza colliseum, pizza forum, pizza information.'

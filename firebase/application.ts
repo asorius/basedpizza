@@ -235,6 +235,7 @@ export const uploadHandler = async (
   try {
     const imageReference = await uploadBytes(storageRef, file).then(
       (snapshot) => {
+        console.log(snapshot);
         return {
           ref: snapshot.ref.fullPath,
           timeCreated: snapshot.metadata.timeCreated,

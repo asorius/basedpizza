@@ -46,7 +46,7 @@ async function getCroppedImg(
   );
 
   const blob: any = await new Promise((resolve, reject) =>
-    canvas.toBlob(resolve, 'image/jpeg', 1)
+    canvas.toBlob(resolve, 'image/jpeg', 0.8)
   );
   const imageFile = new File([blob], imageName.split('.')[0], {
     type: blob.type,
@@ -108,14 +108,18 @@ const ImageCropper = ({
             />
           </Box>
           <Box
+            borderRadius={2}
             sx={{
               position: 'absolute',
               bottom: 0,
               left: '50%',
-              width: '100%',
+              width: '50wv',
+              maxWidth: 860,
+              minWidth: 500,
               transform: ' translateX(-50%)',
               height: '10rem',
               display: 'flex',
+
               background: 'black',
               padding: '1rem',
               alignIitems: 'center',

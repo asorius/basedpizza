@@ -1,12 +1,13 @@
 import React from 'react';
 import { getDataOfSinglePizza } from '../../firebase/application';
 import { useRouter } from 'next/router';
-import PizzaCard from '../../components/pizzaCard';
+import PizzaCard from '../../components/PizzaCard';
 import { BrandObject, CountryObject } from '../../utils/types';
 import Layout from '../../components/Layout';
 
-import UploadImage from 'components/pizzaCard/UploadImage';
+import UploadImage from 'components/PizzaCard/UploadImage';
 import { userContext } from 'context/user/UserContextProvider';
+import Head from 'next/head';
 
 export default function Pizza() {
   const { user } = userContext();
@@ -46,6 +47,16 @@ export default function Pizza() {
 
   return (
     <Layout>
+      {pizzaCredentials && (
+        <Head>
+          <title>Based {pizzaCredentials.name}</title>
+          <meta
+            property='og:title'
+            content={`${pizzaCredentials.name} of ${pizzaCredentials.name} in ${pizzaCredentials.country} `}
+            key={`${pizzaCredentials.name} `}
+          />
+        </Head>
+      )}
       {resultCountryObject && brandObject && pizzaCredentials && (
         <PizzaCard
           countryInfo={resultCountryObject.info}

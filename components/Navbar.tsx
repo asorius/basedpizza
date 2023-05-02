@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import base from '../assets/base.svg';
 import Link from 'next/link';
 import Image from 'next/image';
-import UserCard from './userCard';
+import UserCard from './User';
 export default function Navbar() {
   return (
     <Box color='secondary' sx={{ flexGrow: 1 }} id='back-to-top-anchor'>
@@ -14,8 +14,7 @@ export default function Navbar() {
         <Grid container>
           <Grid item xs={4} lg={9}>
             <Link href='/'>
-              <h2>PizzaBase 🍕</h2>
-              {/* <Image src={base} alt='image of pizza base' /> */}
+              <h2>BASED 🍕</h2>
             </Link>{' '}
           </Grid>
           <Grid item xs={4} lg={3}>

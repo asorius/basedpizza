@@ -3,10 +3,10 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import FormHelperText from '@mui/material/FormHelperText';
-import { capitalized } from 'utils/utils';
+import { capitalized } from 'utils';
 import { getDataOfSingleCountry } from '../../firebase/application';
 import { CountryJSONType } from 'utils/types';
-import { countries } from 'utils/utils';
+import { countries } from 'utils';
 
 export default function CountrySelect(props: {
   label: string;
@@ -69,7 +69,6 @@ export default function CountrySelect(props: {
           sx={{ '& > img': { mr: 2, flexShrink: 0 } }}
           {...props}>
           <img
-            loading='lazy'
             width='20'
             src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
             srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}

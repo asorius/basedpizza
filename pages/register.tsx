@@ -8,7 +8,7 @@ import {
   SubmitErrorHandler,
 } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { capitalized } from '../utils/utils';
+import { capitalized } from '../utils';
 import {
   Button,
   FormControl,
